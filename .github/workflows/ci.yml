@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies (internal)
+        run: bun install
+        working-directory: ./internal
+
+      - name: Install dependencies (public)
+        run: bun install
+        working-directory: ./public
+
+      - name: Lint (internal)
+        run: bun run lint
+        working-directory: ./internal
+
+      - name: Lint (public)
+        run: bun run lint
+        working-directory: ./public
+
+      - name: Type Check (internal)
+        run: bun run typecheck
+        working-directory: ./internal
+
+      - name: Type Check (public)
+        run: bun run typecheck
+        working-directory: ./public
+
+      - name: Test (internal)
+        run: bun run test
+        working-directory: ./internal
+
+      - name: Test (public)
+        run: bun run test
+        working-directory: ./public
