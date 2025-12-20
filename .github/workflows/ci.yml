@@ -19,32 +19,32 @@ jobs:
 
       - name: Install dependencies (internal)
         run: bun install
-        working-directory: ./internal
+        working-directory: ./apps/internal
 
       - name: Install dependencies (public)
         run: bun install
-        working-directory: ./public
+        working-directory: ./apps/public
 
       - name: Lint (internal)
         run: bun run lint
-        working-directory: ./internal
+        working-directory: ./apps/internal
 
       - name: Lint (public)
         run: bun run lint
-        working-directory: ./public
+        working-directory: ./apps/public
 
       - name: Type Check (internal)
         run: bun run typecheck
-        working-directory: ./internal
+        working-directory: ./apps/internal
 
       - name: Type Check (public)
         run: bun run typecheck
-        working-directory: ./public
+        working-directory: ./apps/public
 
       - name: Test (internal)
         run: bun run test
-        working-directory: ./internal
+        working-directory: ./apps/internal
 
       - name: Test (public)
         run: bun run test
-        working-directory: ./public
+        working-directory: ./apps/public

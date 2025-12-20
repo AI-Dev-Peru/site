@@ -1,0 +1,21 @@
+{
+    "name": "ai-dev-peru",
+    "private": true,
+    "workspaces": [
+        "apps/*"
+    ],
+    "scripts": {
+        "dev": "bun run dev:internal & bun run dev:public",
+        "dev:internal": "bun --cwd apps/internal dev",
+        "dev:public": "bun --cwd apps/public dev",
+        "build": "bun run build:internal && bun run build:public",
+        "build:internal": "bun --cwd apps/internal build",
+        "build:public": "bun --cwd apps/public build",
+        "lint:internal": "bun --cwd apps/internal lint",
+        "lint:public": "bun --cwd apps/public lint",
+        "typecheck:internal": "bun --cwd apps/internal typecheck",
+        "typecheck:public": "bun --cwd apps/public typecheck",
+        "test:internal": "bun --cwd apps/internal test",
+        "test:public": "bun --cwd apps/public test"
+    }
+}
