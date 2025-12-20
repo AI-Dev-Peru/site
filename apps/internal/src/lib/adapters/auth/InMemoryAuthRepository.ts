@@ -1,4 +1,4 @@
-import { AuthRepository, User } from "../repositories/AuthRepository";
+import { AuthRepository, User } from "../../repositories/AuthRepository";
 
 export const FAKE_USER: User = {
     id: 'fake-user-123',

@@ -1,4 +1,4 @@
-import { InMemoryAuthRepository } from "../../lib/adapters/InMemoryAuthRepository";
+import { InMemoryAuthRepository } from "../../lib/adapters/auth/InMemoryAuthRepository";
 import { User } from "../../lib/repositories/AuthRepository";
 
 export class FakeAuthRepository extends InMemoryAuthRepository {

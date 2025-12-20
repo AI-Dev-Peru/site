@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { FakeAuthRepository } from '../../test/doubles/FakeAuthRepository';
-import { FAKE_USER } from './InMemoryAuthRepository';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { FAKE_USER } from '../../lib/adapters/auth/InMemoryAuthRepository';
+import { FakeAuthRepository } from './FakeAuthRepository';
 
 describe('FakeAuthRepository', () => {
     let repo: FakeAuthRepository;

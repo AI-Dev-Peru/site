@@ -1,14 +1,14 @@
 import { SpeakerRepository } from './repositories/SpeakerRepository';
 import { EventRepository } from './repositories/EventRepository';
 import { AuthRepository } from './repositories/AuthRepository';
-import { InMemorySpeakerRepository } from './adapters/InMemorySpeakerRepository';
-import { InMemoryEventRepository } from './adapters/InMemoryEventRepository';
-import { LocalStorageSpeakerRepository } from './adapters/LocalStorageSpeakerRepository';
-import { LocalStorageEventRepository } from './adapters/LocalStorageEventRepository';
-import { SupabaseSpeakerRepository } from './adapters/SupabaseSpeakerRepository';
-import { SupabaseEventRepository } from './adapters/SupabaseEventRepository';
-import { LocalStorageAuthRepository } from './adapters/LocalStorageAuthRepository';
-import { SupabaseAuthRepository } from './adapters/SupabaseAuthRepository';
+import { InMemorySpeakerRepository } from './adapters/speakers/InMemorySpeakerRepository';
+import { InMemoryEventRepository } from './adapters/events/InMemoryEventRepository';
+import { LocalStorageSpeakerRepository } from './adapters/speakers/LocalStorageSpeakerRepository';
+import { LocalStorageEventRepository } from './adapters/events/LocalStorageEventRepository';
+import { SupabaseSpeakerRepository } from './adapters/speakers/SupabaseSpeakerRepository';
+import { SupabaseEventRepository } from './adapters/events/SupabaseEventRepository';
+import { LocalStorageAuthRepository } from './adapters/auth/LocalStorageAuthRepository';
+import { SupabaseAuthRepository } from './adapters/auth/SupabaseAuthRepository';
 
 export type DataSourceType = 'in-memory' | 'local-storage' | 'supabase';
 

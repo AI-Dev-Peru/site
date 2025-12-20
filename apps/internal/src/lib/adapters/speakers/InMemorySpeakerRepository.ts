@@ -1,5 +1,5 @@
-import { SpeakerRepository } from '../repositories/SpeakerRepository';
-import { Speaker, CreateSpeakerDTO } from '../../features/speakers/types';
+import { SpeakerRepository } from '../../repositories/SpeakerRepository';
+import { Speaker, CreateSpeakerDTO } from '../../../features/speakers/types';
 
 const INITIAL_SPEAKERS: Speaker[] = [
     {

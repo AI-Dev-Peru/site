@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient, User as SupabaseUser } from "@supabase/supabase-js";
-import { AuthRepository, User } from "../repositories/AuthRepository";
+import { AuthRepository, User } from "../../repositories/AuthRepository";
 
 export class SupabaseAuthRepository implements AuthRepository {
     private client: SupabaseClient;

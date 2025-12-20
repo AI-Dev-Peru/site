@@ -1,5 +1,5 @@
-import { EventRepository } from '../repositories/EventRepository';
-import { Event, CreateEventDTO } from '../../features/events/types';
+import { EventRepository } from '../../repositories/EventRepository';
+import { Event, CreateEventDTO } from '../../../features/events/types';
 
 export class SupabaseEventRepository implements EventRepository {
     async getEvents(): Promise<Event[]> {
