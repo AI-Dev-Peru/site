@@ -12,13 +12,16 @@ const INITIAL_EVENTS: Event[] = [
         format: 'in-person',
         status: 'done',
         imageUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=2670',
-        registrationUrl: 'https://lu.ma/event123',
-        streamingUrl: 'https://youtube.com/video',
-        slidesUrl: 'https://slides.com/deck',
-        assetsUrl: 'https://drive.google.com/folder',
-        locationUrl: 'https://maps.google.com/?q=lima',
-        communityUrl: 'https://chat.whatsapp.com/inv',
         attendeeCount: 45,
+        links: [
+            { type: 'registration', url: 'https://lu.ma/event123' },
+            { type: 'streaming', url: 'https://youtube.com/video' },
+            { type: 'slides', url: 'https://slides.com/deck' },
+            { type: 'assets', url: 'https://drive.google.com/folder' },
+            { type: 'location', url: 'https://maps.google.com/?q=lima' },
+            { type: 'community', url: 'https://chat.whatsapp.com/inv' },
+        ],
+        agenda: [],
     },
     {
         id: '2',
@@ -29,7 +32,10 @@ const INITIAL_EVENTS: Event[] = [
         description: 'Deep dive into RAG pipelines.',
         format: 'remote',
         status: 'draft',
-        registrationUrl: 'https://lu.ma/event2',
+        links: [
+            { type: 'registration', url: 'https://lu.ma/event2' },
+        ],
+        agenda: [],
     },
     {
         id: '3',
@@ -40,6 +46,8 @@ const INITIAL_EVENTS: Event[] = [
         description: 'Workshops and networking.',
         format: 'in-person',
         status: 'draft',
+        links: [],
+        agenda: [],
     },
 ];
 
@@ -64,6 +72,8 @@ export class InMemoryEventRepository implements EventRepository {
             location: '',
             description: '',
             status: 'draft',
+            links: [],
+            agenda: [],
         };
         this.events = [newEvent, ...this.events];
         return newEvent;

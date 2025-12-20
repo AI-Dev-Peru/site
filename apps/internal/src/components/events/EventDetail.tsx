@@ -1,9 +1,8 @@
-import { useParams, useNavigate } from '@tanstack/react-router'
+import { useParams, useNavigate, Link } from '@tanstack/react-router'
 import { useEvent, useUpdateEvent, useDeleteEvent } from '../../features/events/hooks'
-import { type Event } from '../../features/events/types'
+import { useEventForm } from '../../features/events/useEventForm'
 import { ArrowLeft, ExternalLink, Calendar, Clock, MapPin, AlignLeft, MonitorPlay, FolderOpen, Users, Hash } from 'lucide-react'
-import { useState, useEffect } from 'react'
-import { Link } from '@tanstack/react-router'
+import { useState } from 'react'
 import { Agenda } from './Agenda'
 import { EventReadiness } from './EventReadiness'
 
@@ -19,16 +18,10 @@ export function EventDetail() {
     const deleteEvent = useDeleteEvent()
     const navigate = useNavigate()
 
-    const [formData, setFormData] = useState<Partial<Event>>({})
+    const { formData, updateField, updateLink, getLink, setFormData } = useEventForm(event)
     const [isCompletionModalOpen, setIsCompletionModalOpen] = useState(false)
     const [attendeeInput, setAttendeeInput] = useState(0)
     const [activeTab, setActiveTab] = useState('details')
-
-    useEffect(() => {
-        if (event) {
-            setFormData(event)
-        }
-    }, [event])
 
     if (isLoading) {
         return (
@@ -88,10 +81,6 @@ export function EventDetail() {
         const hasAgenda = (formData.agenda?.length || 0) > 0
         const hasSlides = formData.agenda?.every(t => !!t.slidesUrl)
         return hasBasicInfo && hasAgenda && hasSlides
-    }
-
-    const handleChange = (field: keyof Event, value: any) => {
-        setFormData(prev => ({ ...prev, [field]: value }))
     }
 
     const handleMarkDone = () => {
@@ -179,7 +168,7 @@ export function EventDetail() {
                                 <input
                                     type="text"
                                     value={formData.title || ''}
-                                    onChange={e => handleChange('title', e.target.value)}
+                                    onChange={e => updateField('title', e.target.value)}
                                     className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:ring-1 focus:ring-zinc-600 outline-none transition-all"
                                 />
                             </div>
@@ -189,14 +178,14 @@ export function EventDetail() {
                                     label="Date"
                                     type="date"
                                     value={formData.date}
-                                    onChange={v => handleChange('date', v)}
+                                    onChange={v => updateField('date', v)}
                                     icon={Calendar}
                                 />
                                 <IconInput
                                     label="Time"
                                     type="time"
                                     value={formData.time}
-                                    onChange={v => handleChange('time', v)}
+                                    onChange={v => updateField('time', v)}
                                     icon={Clock}
                                 />
                             </div>
@@ -209,7 +198,7 @@ export function EventDetail() {
                                     </div>
                                     <select
                                         value={formData.format}
-                                        onChange={e => handleChange('format', e.target.value)}
+                                        onChange={e => updateField('format', e.target.value)}
                                         className="w-full bg-black/50 border border-zinc-800 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:ring-1 focus:ring-zinc-600 outline-none transition-all appearance-none"
                                     >
                                         <option value="in-person">In-Person</option>
@@ -223,7 +212,7 @@ export function EventDetail() {
                                 <IconInput
                                     label="Location"
                                     value={formData.location}
-                                    onChange={v => handleChange('location', v)}
+                                    onChange={v => updateField('location', v)}
                                     icon={MapPin}
                                 />
                             )}
@@ -236,7 +225,7 @@ export function EventDetail() {
                                     </div>
                                     <textarea
                                         value={formData.description || ''}
-                                        onChange={e => handleChange('description', e.target.value)}
+                                        onChange={e => updateField('description', e.target.value)}
                                         rows={3}
                                         className="w-full bg-black/50 border border-zinc-800 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:ring-1 focus:ring-zinc-600 outline-none resize-none transition-all"
                                     />
@@ -250,38 +239,38 @@ export function EventDetail() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <LinkInput
                                     label="Luma / Registration"
-                                    value={formData.registrationUrl}
-                                    onChange={v => handleChange('registrationUrl', v)}
+                                    value={getLink('registration')}
+                                    onChange={v => updateLink('registration', v)}
                                     icon={ExternalLink}
                                 />
                                 <LinkInput
                                     label="YouTube URL"
-                                    value={formData.streamingUrl}
-                                    onChange={v => handleChange('streamingUrl', v)}
+                                    value={getLink('streaming')}
+                                    onChange={v => updateLink('streaming', v)}
                                     icon={MonitorPlay}
                                 />
                                 <LinkInput
                                     label="Google Drive"
-                                    value={formData.assetsUrl}
-                                    onChange={v => handleChange('assetsUrl', v)}
+                                    value={getLink('assets')}
+                                    onChange={v => updateLink('assets', v)}
                                     icon={FolderOpen}
                                 />
                                 <LinkInput
                                     label="Slides Folder"
-                                    value={formData.slidesUrl}
-                                    onChange={v => handleChange('slidesUrl', v)}
+                                    value={getLink('slides')}
+                                    onChange={v => updateLink('slides', v)}
                                     icon={FolderOpen}
                                 />
                                 <LinkInput
                                     label="Google Maps"
-                                    value={formData.locationUrl}
-                                    onChange={v => handleChange('locationUrl', v)}
+                                    value={getLink('location')}
+                                    onChange={v => updateLink('location', v)}
                                     icon={MapPin}
                                 />
                                 <LinkInput
                                     label="WhatsApp Group"
-                                    value={formData.communityUrl}
-                                    onChange={v => handleChange('communityUrl', v)}
+                                    value={getLink('community')}
+                                    onChange={v => updateLink('community', v)}
                                     icon={Users}
                                 />
                             </div>
@@ -309,7 +298,7 @@ export function EventDetail() {
                     <div className="max-w-2xl animate-in fade-in slide-in-from-bottom-2 duration-300">
                         <Agenda
                             items={formData.agenda || []}
-                            onChange={items => handleChange('agenda', items)}
+                            onChange={items => updateField('agenda', items)}
                         />
                     </div>
                 )}

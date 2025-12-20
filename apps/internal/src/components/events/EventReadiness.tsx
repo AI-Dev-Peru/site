@@ -1,4 +1,5 @@
 import { type Event } from '../../features/events/types'
+import { getEventLink } from '../../features/events/utils'
 import { CheckCircle2, Circle } from 'lucide-react'
 
 export function EventReadiness({ event }: { event: Partial<Event> }) {
@@ -6,7 +7,7 @@ export function EventReadiness({ event }: { event: Partial<Event> }) {
         { label: 'Date & Time Set', done: !!(event.date && event.time) },
         ...((event.format === 'in-person' || event.format === 'hybrid') ? [{ label: 'Location Set', done: !!event.location }] : []),
         { label: 'Description Added', done: !!event.description },
-        { label: 'Registration Link', done: !!event.registrationUrl },
+        { label: 'Registration Link', done: !!getEventLink(event.links, 'registration') },
         { label: 'Agenda Created', done: (event.agenda?.length || 0) > 0 },
         { label: 'Slides Collected', done: event.agenda?.every(t => !!t.slidesUrl) && (event.agenda?.length || 0) > 0 },
     ]

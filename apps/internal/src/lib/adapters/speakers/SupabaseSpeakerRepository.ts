@@ -1,20 +1,73 @@
+import { supabase } from '../../supabase';
 import { SpeakerRepository } from '../../repositories/SpeakerRepository';
 import { Speaker, CreateSpeakerDTO } from '../../../features/speakers/types';
 
 export class SupabaseSpeakerRepository implements SpeakerRepository {
     async getSpeakers(): Promise<Speaker[]> {
-        throw new Error('Method not implemented.');
+        const { data, error } = await supabase
+            .from('speakers')
+            .select('*')
+            .order('name');
+
+        if (error) throw error;
+        return (data || []).map(this.mapSpeaker);
     }
 
-    async getSpeaker(_id: string): Promise<Speaker | undefined> {
-        throw new Error('Method not implemented.');
+    async getSpeaker(id: string): Promise<Speaker | undefined> {
+        const { data, error } = await supabase
+            .from('speakers')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (error) return undefined;
+        return this.mapSpeaker(data);
     }
 
-    async createSpeaker(_data: CreateSpeakerDTO): Promise<Speaker> {
-        throw new Error('Method not implemented.');
+    async createSpeaker(data: CreateSpeakerDTO): Promise<Speaker> {
+        const { data: speaker, error } = await supabase
+            .from('speakers')
+            .insert(this.mapToDb(data))
+            .select()
+            .single();
+
+        if (error) throw error;
+        return this.mapSpeaker(speaker);
     }
 
-    async updateSpeaker(_id: string, _data: Partial<Speaker>): Promise<Speaker> {
-        throw new Error('Method not implemented.');
+    async updateSpeaker(id: string, data: Partial<Speaker>): Promise<Speaker> {
+        const { error } = await supabase
+            .from('speakers')
+            .update(this.mapToDb(data))
+            .eq('id', id);
+
+        if (error) throw error;
+        const updated = await this.getSpeaker(id);
+        if (!updated) throw new Error('Speaker not found after update');
+        return updated;
+    }
+
+    private mapSpeaker(dbSpeaker: any): Speaker {
+        return {
+            id: dbSpeaker.id,
+            name: dbSpeaker.name,
+            role: dbSpeaker.role,
+            company: dbSpeaker.company,
+            bio: dbSpeaker.bio,
+            avatarUrl: dbSpeaker.avatar_url,
+            email: dbSpeaker.email,
+            phone: dbSpeaker.phone,
+            twitter: dbSpeaker.twitter,
+            linkedin: dbSpeaker.linkedin
+        };
+    }
+
+    private mapToDb(data: Partial<Speaker> | CreateSpeakerDTO): any {
+        const dbData: any = { ...data };
+        if ('avatarUrl' in data) {
+            dbData.avatar_url = data.avatarUrl;
+            delete dbData.avatarUrl;
+        }
+        return dbData;
     }
 }

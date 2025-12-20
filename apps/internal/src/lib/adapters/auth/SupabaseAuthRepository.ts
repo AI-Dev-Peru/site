@@ -1,20 +1,14 @@
-import { createClient, SupabaseClient, User as SupabaseUser } from "@supabase/supabase-js";
+import { SupabaseClient, User as SupabaseUser } from "@supabase/supabase-js";
+import { supabase } from "../../supabase";
 import { AuthRepository, User } from "../../repositories/AuthRepository";
 
 export class SupabaseAuthRepository implements AuthRepository {
-    private client: SupabaseClient;
+    private client: SupabaseClient = supabase;
     currentUser: User | null = null;
     private listeners: ((user: User | null) => void)[] = [];
 
     constructor() {
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-        const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-        if (!supabaseUrl || !supabaseKey) {
-            throw new Error("Supabase credentials missing (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY). Auth will fail.");
-        }
-
-        this.client = createClient(supabaseUrl, supabaseKey);
+        // Initialize state
 
         // Initialize state
         this.client.auth.getUser().then(({ data }) => {
