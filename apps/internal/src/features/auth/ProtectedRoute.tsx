@@ -1,5 +1,5 @@
 import { Navigate } from "@tanstack/react-router";
-import { useAuth } from "./AuthProvider";
+import { useAuth } from "./AuthContext";
 import { Lock } from "lucide-react";
 import { Skeleton } from "../../components/ui/skeleton";
 

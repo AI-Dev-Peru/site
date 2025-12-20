@@ -21,8 +21,8 @@ export default defineConfig({
     resolve: {
         alias: {
             "@": resolve(__dirname, "./src"),
-            "react": resolve(__dirname, "node_modules/react"),
-            "react-dom": resolve(__dirname, "node_modules/react-dom"),
+            "react": resolve(__dirname, "../../node_modules/react"),
+            "react-dom": resolve(__dirname, "../../node_modules/react-dom"),
         },
         conditions: ['browser', 'development', 'default'],
     },

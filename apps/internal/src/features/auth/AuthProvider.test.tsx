@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
-import { AuthProvider, useAuth } from './AuthProvider';
+import { AuthProvider } from './AuthProvider';
+import { useAuth } from './AuthContext';
 import { FakeAuthRepository } from '../../test/doubles/FakeAuthRepository';
 
 const TestComponent = () => {
@@ -15,7 +16,7 @@ const TestComponent = () => {
 };
 
 // Skipped due to environment issues, but refactored to use Fakes as requested
-describe.skip('AuthProvider', () => {
+describe('AuthProvider', () => {
     let repo: FakeAuthRepository;
 
     beforeEach(() => {

@@ -13,7 +13,7 @@ vi.mock('@tanstack/react-router', async () => {
     };
 });
 
-describe.skip('ProtectedRoute', () => {
+describe('ProtectedRoute', () => {
     let repo: FakeAuthRepository;
 
     beforeEach(() => {

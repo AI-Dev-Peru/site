@@ -1,16 +1,7 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { User, AuthRepository } from "../../lib/repositories/AuthRepository";
 import { authRepository } from "../../lib/dataSource";
-
-interface AuthContextType {
-    user: User | null;
-    isLoading: boolean;
-    isAllowed: boolean;
-    signInWithGoogle: () => Promise<void>;
-    signOut: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { AuthContext } from "./AuthContext";
 
 interface AuthProviderProps {
     children: React.ReactNode;
@@ -44,12 +35,4 @@ export function AuthProvider({ children, repository = authRepository }: AuthProv
             {children}
         </AuthContext.Provider>
     );
-}
-
-export function useAuth() {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error("useAuth must be used within an AuthProvider");
-    }
-    return context;
 }
