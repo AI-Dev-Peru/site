@@ -1,13 +1,14 @@
 import { SupabaseClient, User as SupabaseUser } from "@supabase/supabase-js";
-import { supabase } from "../../supabase";
+import { getSupabase } from "../../supabase";
 import { AuthRepository, User } from "../../repositories/AuthRepository";
 
 export class SupabaseAuthRepository implements AuthRepository {
-    private client: SupabaseClient = supabase;
+    private client: SupabaseClient;
     currentUser: User | null = null;
     private listeners: ((user: User | null) => void)[] = [];
 
     constructor() {
+        this.client = getSupabase();
         // Initialize state
 
         // Initialize state

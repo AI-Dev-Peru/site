@@ -1,10 +1,10 @@
-import { supabase } from '../../supabase';
+import { getSupabase } from '../../supabase';
 import { EventRepository } from '../../repositories/EventRepository';
 import { Event, CreateEventDTO } from '../../../features/events/types';
 
 export class SupabaseEventRepository implements EventRepository {
     async getEvents(): Promise<Event[]> {
-        const { data, error } = await supabase
+        const { data, error } = await getSupabase()
             .from('events')
             .select(`
                 *,
@@ -18,7 +18,7 @@ export class SupabaseEventRepository implements EventRepository {
     }
 
     async getEvent(id: string): Promise<Event | undefined> {
-        const { data, error } = await supabase
+        const { data, error } = await getSupabase()
             .from('events')
             .select(`
                 *,
@@ -33,7 +33,7 @@ export class SupabaseEventRepository implements EventRepository {
     }
 
     async createEvent(data: CreateEventDTO): Promise<Event> {
-        const { data: event, error } = await supabase
+        const { data: event, error } = await getSupabase()
             .from('events')
             .insert({
                 title: data.title,
@@ -54,7 +54,7 @@ export class SupabaseEventRepository implements EventRepository {
 
         // 1. Update basic fields
         if (Object.keys(basicData).length > 0) {
-            const { error: updateError } = await supabase
+            const { error: updateError } = await getSupabase()
                 .from('events')
                 .update(this.mapToDb(basicData))
                 .eq('id', id);
@@ -63,9 +63,9 @@ export class SupabaseEventRepository implements EventRepository {
 
         // 2. Sync Links
         if (links) {
-            await supabase.from('event_links').delete().eq('event_id', id);
+            await getSupabase().from('event_links').delete().eq('event_id', id);
             if (links.length > 0) {
-                const { error: linksError } = await supabase
+                const { error: linksError } = await getSupabase()
                     .from('event_links')
                     .insert(links.map(l => ({
                         event_id: id,
@@ -78,9 +78,9 @@ export class SupabaseEventRepository implements EventRepository {
 
         // 3. Sync Agenda
         if (agenda) {
-            await supabase.from('agenda_items').delete().eq('event_id', id);
+            await getSupabase().from('agenda_items').delete().eq('event_id', id);
             if (agenda.length > 0) {
-                const { error: agendaError } = await supabase
+                const { error: agendaError } = await getSupabase()
                     .from('agenda_items')
                     .insert(agenda.map((item, index) => ({
                         event_id: id,
@@ -98,7 +98,7 @@ export class SupabaseEventRepository implements EventRepository {
     }
 
     async deleteEvent(id: string): Promise<void> {
-        const { error } = await supabase.from('events').delete().eq('id', id);
+        const { error } = await getSupabase().from('events').delete().eq('id', id);
         if (error) throw error;
     }
 

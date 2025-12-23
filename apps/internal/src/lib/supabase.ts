@@ -1,10 +1,25 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+let supabaseInstance: SupabaseClient | null = null;
 
-if (!supabaseUrl || !supabaseKey) {
-    console.warn("Supabase credentials missing (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY). Supabase features will fail.");
-}
+/**
+ * Returns a singleton instance of the Supabase client.
+ * Lazy-initialized to avoid crashes in environments without credentials (e.g. CI/Tests)
+ * if Supabase is not actually being used.
+ */
+export const getSupabase = (): SupabaseClient => {
+    if (!supabaseInstance) {
+        const url = import.meta.env.VITE_SUPABASE_URL;
+        const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl || '', supabaseKey || '');
+        if (!url || !key) {
+            throw new Error(
+                "Supabase credentials missing (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY). " +
+                "Ensure these are set in your .env file or environment."
+            );
+        }
+
+        supabaseInstance = createClient(url, key);
+    }
+    return supabaseInstance;
+};

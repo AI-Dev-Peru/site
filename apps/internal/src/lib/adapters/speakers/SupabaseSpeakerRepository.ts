@@ -1,10 +1,10 @@
-import { supabase } from '../../supabase';
+import { getSupabase } from '../../supabase';
 import { SpeakerRepository } from '../../repositories/SpeakerRepository';
 import { Speaker, CreateSpeakerDTO } from '../../../features/speakers/types';
 
 export class SupabaseSpeakerRepository implements SpeakerRepository {
     async getSpeakers(): Promise<Speaker[]> {
-        const { data, error } = await supabase
+        const { data, error } = await getSupabase()
             .from('speakers')
             .select('*')
             .order('name');
@@ -14,7 +14,7 @@ export class SupabaseSpeakerRepository implements SpeakerRepository {
     }
 
     async getSpeaker(id: string): Promise<Speaker | undefined> {
-        const { data, error } = await supabase
+        const { data, error } = await getSupabase()
             .from('speakers')
             .select('*')
             .eq('id', id)
@@ -25,7 +25,7 @@ export class SupabaseSpeakerRepository implements SpeakerRepository {
     }
 
     async createSpeaker(data: CreateSpeakerDTO): Promise<Speaker> {
-        const { data: speaker, error } = await supabase
+        const { data: speaker, error } = await getSupabase()
             .from('speakers')
             .insert(this.mapToDb(data))
             .select()
@@ -36,7 +36,7 @@ export class SupabaseSpeakerRepository implements SpeakerRepository {
     }
 
     async updateSpeaker(id: string, data: Partial<Speaker>): Promise<Speaker> {
-        const { error } = await supabase
+        const { error } = await getSupabase()
             .from('speakers')
             .update(this.mapToDb(data))
             .eq('id', id);

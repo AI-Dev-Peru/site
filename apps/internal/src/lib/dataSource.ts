@@ -13,7 +13,7 @@ import { SupabaseAuthRepository } from './adapters/auth/SupabaseAuthRepository';
 export type DataSourceType = 'in-memory' | 'local-storage' | 'supabase';
 
 // Configuration - this could come from env vars
-const DATA_SOURCE: DataSourceType = (import.meta.env.VITE_DATA_SOURCE as DataSourceType) || 'local-storage';
+const DATA_SOURCE: DataSourceType = (import.meta.env.VITE_DATA_SOURCE as DataSourceType) || 'in-memory';
 
 class DataSourceFactory {
     private static speakerRepository: SpeakerRepository;

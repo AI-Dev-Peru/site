@@ -26,13 +26,13 @@
     "lint-staged": {
         "apps/internal/**/*.{ts,tsx}": [
             "bun --cwd apps/internal lint",
-            "bun --cwd apps/internal typecheck",
-            "bun --cwd apps/internal test"
+            "bash -c 'bun run typecheck:internal'",
+            "bash -c 'bun run test:internal'"
         ],
         "apps/public/**/*.{ts,tsx}": [
             "bun --cwd apps/public lint",
-            "bun --cwd apps/public typecheck",
-            "bun --cwd apps/public test"
+            "bash -c 'bun run typecheck:public'",
+            "bash -c 'bun run test:public'"
         ]
     }
 }
