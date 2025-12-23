@@ -28,7 +28,7 @@ export class SupabaseAuthRepository implements AuthRepository {
         const { error } = await this.client.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: window.location.origin
+                redirectTo: `${window.location.origin}/internal/`
             }
         });
 
