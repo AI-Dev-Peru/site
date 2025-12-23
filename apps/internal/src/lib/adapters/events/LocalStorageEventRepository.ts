@@ -33,6 +33,8 @@ export class LocalStorageEventRepository implements EventRepository {
             location: '',
             description: '',
             status: 'draft',
+            links: [],
+            agenda: []
         };
         this.saveEventsToStorage([newEvent, ...events]);
         return newEvent;
