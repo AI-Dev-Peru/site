@@ -83,8 +83,8 @@ function SpeakerList() {
 
             {speakers?.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-24 text-center">
-                    <div className="w-24 h-24 bg-zinc-900/50 rounded-full flex items-center justify-center mb-6 border border-zinc-800 p-4">
-                        <img src="/robot.png" alt="No speakers" className="w-full h-full object-contain opacity-50 grayscale" />
+                    <div className="mb-6">
+                        <img src="robot.png" alt="No speakers" className="w-32 h-32 object-contain" />
                     </div>
                     <h3 className="text-xl font-bold text-white mb-2">No speakers found</h3>
                     <p className="text-zinc-400 max-w-sm mb-8">
