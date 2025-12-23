@@ -1,7 +1,10 @@
 import { Link } from '@tanstack/react-router'
-import { Calendar, Users, BarChart3, Megaphone } from 'lucide-react'
+import { Calendar, Users, BarChart3, Megaphone, LogOut } from 'lucide-react'
+import { useAuth } from '../../features/auth/AuthContext'
 
 export function Layout({ children }: { children: React.ReactNode }) {
+    const { user, signOut } = useAuth()
+
     return (
         <div
             className="min-h-screen text-zinc-100 font-sans selection:bg-indigo-500/30"
@@ -27,7 +30,34 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700" />
+                        {user && (
+                            <div className="flex items-center gap-3">
+                                <div className="flex flex-col items-end mr-1 hidden sm:flex">
+                                    <span className="text-xs font-semibold text-zinc-200">{user.name}</span>
+                                    <span className="text-[10px] text-zinc-500 line-clamp-1">{user.email}</span>
+                                </div>
+                                {user.avatarUrl ? (
+                                    <img
+                                        src={user.avatarUrl}
+                                        alt={user.name}
+                                        className="w-8 h-8 rounded-full border border-white/10"
+                                    />
+                                ) : (
+                                    <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
+                                        <span className="text-[10px] font-bold text-indigo-400">
+                                            {user.name?.substring(0, 2).toUpperCase() || '??'}
+                                        </span>
+                                    </div>
+                                )}
+                                <button
+                                    onClick={() => signOut()}
+                                    className="p-2 rounded-md text-zinc-400 hover:text-white hover:bg-white/5 transition-colors"
+                                    title="Log out"
+                                >
+                                    <LogOut className="w-4 h-4" />
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </nav>
