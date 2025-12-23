@@ -1,24 +1,25 @@
 {
+    "cleanUrls": true,
     "rewrites": [
         {
             "source": "/internal/(.*\\..*)",
-            "destination": "/apps/internal/dist/$1"
+            "destination": "/internal/$1"
         },
         {
             "source": "/internal/(.*)",
-            "destination": "/apps/internal/dist/index.html"
+            "destination": "/internal/index.html"
         },
         {
             "source": "/internal",
-            "destination": "/apps/internal/dist/index.html"
+            "destination": "/internal/index.html"
         },
         {
             "source": "/(.*\\..*)",
-            "destination": "/apps/public/dist/$1"
+            "destination": "/$1"
         },
         {
             "source": "/(.*)",
-            "destination": "/apps/public/dist/index.html"
+            "destination": "/index.html"
         }
     ]
 }
