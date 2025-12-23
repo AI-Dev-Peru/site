@@ -1,16 +1,24 @@
 {
     "rewrites": [
         {
-            "source": "/internal/(.*)",
+            "source": "/internal/(.*\\..*)",
             "destination": "/apps/internal/dist/$1"
+        },
+        {
+            "source": "/internal/(.*)",
+            "destination": "/apps/internal/dist/index.html"
         },
         {
             "source": "/internal",
             "destination": "/apps/internal/dist/index.html"
         },
         {
-            "source": "/(.*)",
+            "source": "/(.*\\..*)",
             "destination": "/apps/public/dist/$1"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/apps/public/dist/index.html"
         }
     ]
 }
