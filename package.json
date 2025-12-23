@@ -16,6 +16,23 @@
         "typecheck:internal": "bun --cwd apps/internal typecheck",
         "typecheck:public": "bun --cwd apps/public typecheck",
         "test:internal": "bun --cwd apps/internal test",
-        "test:public": "bun --cwd apps/public test"
+        "test:public": "bun --cwd apps/public test",
+        "prepare": "husky"
+    },
+    "devDependencies": {
+        "husky": "^9.1.7",
+        "lint-staged": "^16.2.7"
+    },
+    "lint-staged": {
+        "apps/internal/**/*.{ts,tsx}": [
+            "bun --cwd apps/internal lint",
+            "bun --cwd apps/internal typecheck",
+            "bun --cwd apps/internal test"
+        ],
+        "apps/public/**/*.{ts,tsx}": [
+            "bun --cwd apps/public lint",
+            "bun --cwd apps/public typecheck",
+            "bun --cwd apps/public test"
+        ]
     }
 }
