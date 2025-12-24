@@ -17,34 +17,18 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Install dependencies (internal)
+      - name: Install dependencies
         run: bun install
-        working-directory: ./apps/internal
+        working-directory: ./apps/web
 
-      - name: Install dependencies (public)
-        run: bun install
-        working-directory: ./apps/public
-
-      - name: Lint (internal)
+      - name: Lint
         run: bun run lint
-        working-directory: ./apps/internal
+        working-directory: ./apps/web
 
-      - name: Lint (public)
-        run: bun run lint
-        working-directory: ./apps/public
-
-      - name: Type Check (internal)
+      - name: Type Check
         run: bun run typecheck
-        working-directory: ./apps/internal
+        working-directory: ./apps/web
 
-      - name: Type Check (public)
-        run: bun run typecheck
-        working-directory: ./apps/public
-
-      - name: Test (internal)
+      - name: Test
         run: bun run test
-        working-directory: ./apps/internal
-
-      - name: Test (public)
-        run: bun run test
-        working-directory: ./apps/public
+        working-directory: ./apps/web
