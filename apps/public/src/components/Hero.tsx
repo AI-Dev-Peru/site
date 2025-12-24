@@ -132,13 +132,18 @@ export function Hero() {
                     variants={animations.fadeIn}
                     className="flex flex-col sm:flex-row items-center gap-4"
                 >
-                    <button className={cn(
-                        "w-full sm:w-auto px-8 py-4 rounded-full bg-electric-violet text-white font-bold transition-all duration-300",
-                        "hover:scale-105 hover:shadow-[0_0_40px_rgba(139,92,246,0.5)] active:scale-95 flex items-center justify-center gap-2"
-                    )}>
-                        Únete a la Comunidad
+                    <a
+                        href="https://ai-dev-peru.kit.com/bfdfeff5d9"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(
+                            "w-full sm:w-auto px-8 py-4 rounded-full bg-electric-violet text-white font-bold transition-all duration-300",
+                            "hover:scale-105 hover:shadow-[0_0_40px_rgba(139,92,246,0.5)] active:scale-95 flex items-center justify-center gap-2"
+                        )}
+                    >
+                        Únete a la comunidad
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </button>
+                    </a>
 
                     <button className={cn(
                         "w-full sm:w-auto px-8 py-4 rounded-full bg-white/5 border border-white/10 text-white font-bold transition-all duration-300",

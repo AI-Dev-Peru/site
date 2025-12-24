@@ -21,13 +21,15 @@ export function Navigation() {
                 </nav>
 
                 <a
-                    href="/login"
+                    href="https://ai-dev-peru.kit.com/bfdfeff5d9"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={cn(
                         "px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300",
                         "bg-white text-black hover:bg-electric-violet hover:text-white hover:scale-105 active:scale-95"
                     )}
                 >
-                    Login
+                    Suscríbete
                 </a>
             </div>
         </motion.nav>
