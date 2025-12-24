@@ -34,7 +34,7 @@ export function Dashboard() {
                         label="All Status"
                         value={statusFilter}
                         onChange={setStatusFilter}
-                        options={['draft', 'done']}
+                        options={['draft', 'published', 'done']}
                     />
                     <button
                         onClick={() => setIsCreateModalOpen(true)}
@@ -196,6 +196,7 @@ function EventCard({ event }: { event: Event }) {
 function StatusBadge({ status }: { status: EventStatus }) {
     const styles = {
         draft: "bg-zinc-800 text-zinc-400 border-zinc-700",
+        published: "bg-blue-500/10 text-blue-400 border-blue-500/20",
         done: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
     }
 

@@ -14,8 +14,17 @@ export class LocalStorageEventRepository implements EventRepository {
     }
 
     async getEvents(): Promise<Event[]> {
-        await new Promise((resolve) => setTimeout(resolve, 200));
-        return this.getEventsFromStorage();
+        const events = this.getEventsFromStorage();
+        return events.sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+    }
+
+    async getPublishedEvents(): Promise<Event[]> {
+        const events = this.getEventsFromStorage();
+        return events
+            .filter(e => e.status === 'published')
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     }
 
     async getEvent(id: string): Promise<Event | undefined> {

@@ -56,9 +56,18 @@ export class InMemoryEventRepository implements EventRepository {
 
     async getEvents(): Promise<Event[]> {
         await new Promise((resolve) => setTimeout(resolve, 500));
-        return [...this.events];
+        // Return sorted by date
+        return [...this.events].sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
     }
 
+    async getPublishedEvents(): Promise<Event[]> {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        return this.events
+            .filter(e => e.status === 'published')
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    }
     async getEvent(id: string): Promise<Event | undefined> {
         await new Promise((resolve) => setTimeout(resolve, 300));
         return this.events.find((e) => e.id === id);

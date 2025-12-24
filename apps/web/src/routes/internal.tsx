@@ -7,10 +7,7 @@ export const Route = createFileRoute('/internal')({
     component: InternalComp,
 })
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
-const queryClient = new QueryClient()
 
 function InternalComp() {
     const location = useLocation()
@@ -18,19 +15,16 @@ function InternalComp() {
     const isLoginPage = location.pathname === '/internal/login'
 
     return (
-        <QueryClientProvider client={queryClient}>
-            <AuthProvider>
-                {isLoginPage ? (
-                    <Outlet />
-                ) : (
-                    <ProtectedRoute>
-                        <Layout>
-                            <Outlet />
-                        </Layout>
-                    </ProtectedRoute>
-                )}
-            </AuthProvider>
-            <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
+        <AuthProvider>
+            {isLoginPage ? (
+                <Outlet />
+            ) : (
+                <ProtectedRoute>
+                    <Layout>
+                        <Outlet />
+                    </Layout>
+                </ProtectedRoute>
+            )}
+        </AuthProvider>
     )
 }

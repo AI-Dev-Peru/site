@@ -6,6 +6,10 @@ export const eventsApi = {
         return eventsRepository.getEvents();
     },
 
+    getPublishedEvents: async (): Promise<Event[]> => {
+        return eventsRepository.getPublishedEvents();
+    },
+
     getEvent: async (id: string): Promise<Event | undefined> => {
         return eventsRepository.getEvent(id);
     },

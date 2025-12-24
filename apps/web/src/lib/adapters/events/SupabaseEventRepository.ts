@@ -17,6 +17,21 @@ export class SupabaseEventRepository implements EventRepository {
         return (data || []).map(this.mapEvent);
     }
 
+    async getPublishedEvents(): Promise<Event[]> {
+        const { data, error } = await getSupabase()
+            .from('events')
+            .select(`
+                *,
+                event_links (type_id, url),
+                agenda_items (*)
+            `)
+            .eq('status', 'published')
+            .order('date', { ascending: true }); // Upcoming events should be ordered by date ascending? User said "list of published events". Usually upcoming are asc.
+
+        if (error) throw error;
+        return (data || []).map(this.mapEvent);
+    }
+
     async getEvent(id: string): Promise<Event | undefined> {
         const { data, error } = await getSupabase()
             .from('events')

@@ -9,6 +9,13 @@ export function useEvents() {
     });
 }
 
+export function usePublishedEvents() {
+    return useQuery({
+        queryKey: ['events', 'published'],
+        queryFn: eventsApi.getPublishedEvents,
+    });
+}
+
 export function useEvent(id: string) {
     return useQuery({
         queryKey: ['events', id],

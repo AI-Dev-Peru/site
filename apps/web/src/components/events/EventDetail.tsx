@@ -66,6 +66,7 @@ function EventEditor({ event }: { event: Event }) {
     const [isCompletionModalOpen, setIsCompletionModalOpen] = useState(false)
     const [attendeeInput, setAttendeeInput] = useState(0)
     const [activeTab, setActiveTab] = useState('details')
+    const [isPublishing, setIsPublishing] = useState(false)
 
     const handleSave = async () => {
         await updateEvent.mutateAsync({ id: event.id, data: formData })
@@ -83,6 +84,27 @@ function EventEditor({ event }: { event: Event }) {
         const hasAgenda = (formData.agenda?.length || 0) > 0
         const hasSlides = formData.agenda?.every(t => !!t.slidesUrl)
         return hasBasicInfo && hasAgenda && hasSlides
+    }
+
+    const isReadyToPublish = () => {
+        const hasBasicInfo = !!(formData.date && formData.description)
+        const hasAgenda = (formData.agenda?.length || 0) > 0
+        // Published events might not have slides yet
+        return hasBasicInfo && hasAgenda
+    }
+
+    const handlePublish = async () => {
+        if (!isReadyToPublish()) {
+            alert('Cannot publish. Please ensure Date, Description, and Agenda are set.')
+            return
+        }
+        setIsPublishing(true)
+        try {
+            await updateEvent.mutateAsync({ id: event.id, data: { ...formData, status: 'published' } })
+            setFormData(prev => ({ ...prev, status: 'published' }))
+        } finally {
+            setIsPublishing(false)
+        }
     }
 
     const handleMarkDone = () => {
@@ -125,15 +147,37 @@ function EventEditor({ event }: { event: Event }) {
                     <div className="flex items-center gap-3">
                         <div className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${formData.status === 'done'
                             ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                            : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                            : formData.status === 'published'
+                                ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                                : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
                             }`}>
-                            {formData.status === 'done' ? 'Done' : 'In Progress'}
+                            {formData.status === 'done' ? 'Done' : formData.status === 'published' ? 'Published' : 'In Progress'}
                         </div>
 
-                        {event.status === 'draft' && (
+                        {formData.status === 'draft' && (
+                            <button
+                                onClick={handlePublish}
+                                disabled={isPublishing}
+                                className="px-3 py-1.5 bg-white text-black text-xs font-medium rounded-md hover:bg-zinc-200 transition-colors disabled:opacity-50"
+                            >
+                                {isPublishing ? 'Publishing...' : 'Publish'}
+                            </button>
+                        )}
+
+                        {formData.status === 'published' && (
                             <button
                                 onClick={handleMarkDone}
-                                className="px-3 py-1.5 bg-white text-black text-xs font-medium rounded-md hover:bg-zinc-200 transition-colors"
+                                className="px-3 py-1.5 bg-zinc-800 text-white border border-zinc-700 text-xs font-medium rounded-md hover:bg-zinc-700 transition-colors"
+                            >
+                                Mark as Done
+                            </button>
+                        )}
+
+                        {formData.status === 'draft' && (
+                            // Only for dev/testing or if they want to skip publish
+                            <button
+                                onClick={handleMarkDone}
+                                className="hidden px-3 py-1.5 bg-zinc-800 text-white border border-zinc-700 text-xs font-medium rounded-md hover:bg-zinc-700 transition-colors"
                             >
                                 Mark as Done
                             </button>

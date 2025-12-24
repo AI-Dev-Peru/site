@@ -1,5 +1,5 @@
 export type EventFormat = 'in-person' | 'remote' | 'hybrid';
-export type EventStatus = 'draft' | 'done';
+export type EventStatus = 'draft' | 'published' | 'done';
 
 export interface EventLink {
     type: string;
