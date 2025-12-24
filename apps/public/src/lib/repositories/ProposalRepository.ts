@@ -1,0 +1,28 @@
+export interface TalkProposal {
+    id: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    description: string;
+    duration: '15' | '30';
+    linkedin?: string;
+    github?: string;
+    twitter?: string;
+    createdAt: string;
+}
+
+export interface CreateProposalDTO {
+    fullName: string;
+    email: string;
+    phone: string;
+    description: string;
+    duration: '15' | '30';
+    linkedin?: string;
+    github?: string;
+    twitter?: string;
+}
+
+export interface ProposalRepository {
+    submitProposal(data: CreateProposalDTO): Promise<TalkProposal>;
+    getProposals(): Promise<TalkProposal[]>;
+}

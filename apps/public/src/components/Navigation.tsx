@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { cn } from "../lib/design-system";
+import { Link } from "@tanstack/react-router";
 
 export function Navigation() {
     return (
@@ -10,14 +11,16 @@ export function Navigation() {
             className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-6 max-w-7xl mx-auto backdrop-blur-sm"
         >
             <div className="flex items-center gap-2">
-                <img src="/logo.png" alt="AI Dev Peru Assets" className="h-10 w-auto" />
+                <Link to="/">
+                    <img src="/logo.png" alt="AI Dev Peru Assets" className="h-10 w-auto" />
+                </Link>
             </div>
 
             <div className="flex items-center gap-8">
                 <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-white/60">
-                    <a href="#" className="hover:text-white transition-colors">Eventos</a>
-                    <a href="#" className="hover:text-white transition-colors">Nosotros</a>
-                    <a href="#" className="hover:text-white transition-colors">Comunidad</a>
+                    <Link to="/" hash="events" className="hover:text-white transition-colors">Eventos</Link>
+                    <Link to="/" hash="nosotros" className="hover:text-white transition-colors">Nosotros</Link>
+                    <Link to="/" hash="speaker" className="hover:text-white transition-colors">Ser Speaker</Link>
                 </nav>
 
                 <a
