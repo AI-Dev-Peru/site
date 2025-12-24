@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SpeakersIndexRouteImport } from './routes/speakers/index'
+import { Route as ProposalsIndexRouteImport } from './routes/proposals/index'
 import { Route as SpeakersSpeakerIdRouteImport } from './routes/speakers/$speakerId'
 import { Route as EventsEventIdRouteImport } from './routes/events/$eventId'
 
@@ -30,6 +31,11 @@ const SpeakersIndexRoute = SpeakersIndexRouteImport.update({
   path: '/speakers/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProposalsIndexRoute = ProposalsIndexRouteImport.update({
+  id: '/proposals/',
+  path: '/proposals/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SpeakersSpeakerIdRoute = SpeakersSpeakerIdRouteImport.update({
   id: '/speakers/$speakerId',
   path: '/speakers/$speakerId',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/events/$eventId': typeof EventsEventIdRoute
   '/speakers/$speakerId': typeof SpeakersSpeakerIdRoute
+  '/proposals': typeof ProposalsIndexRoute
   '/speakers': typeof SpeakersIndexRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/events/$eventId': typeof EventsEventIdRoute
   '/speakers/$speakerId': typeof SpeakersSpeakerIdRoute
+  '/proposals': typeof ProposalsIndexRoute
   '/speakers': typeof SpeakersIndexRoute
 }
 export interface FileRoutesById {
@@ -61,6 +69,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/events/$eventId': typeof EventsEventIdRoute
   '/speakers/$speakerId': typeof SpeakersSpeakerIdRoute
+  '/proposals/': typeof ProposalsIndexRoute
   '/speakers/': typeof SpeakersIndexRoute
 }
 export interface FileRouteTypes {
@@ -70,15 +79,23 @@ export interface FileRouteTypes {
     | '/login'
     | '/events/$eventId'
     | '/speakers/$speakerId'
+    | '/proposals'
     | '/speakers'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/events/$eventId' | '/speakers/$speakerId' | '/speakers'
+  to:
+    | '/'
+    | '/login'
+    | '/events/$eventId'
+    | '/speakers/$speakerId'
+    | '/proposals'
+    | '/speakers'
   id:
     | '__root__'
     | '/'
     | '/login'
     | '/events/$eventId'
     | '/speakers/$speakerId'
+    | '/proposals/'
     | '/speakers/'
   fileRoutesById: FileRoutesById
 }
@@ -87,6 +104,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   EventsEventIdRoute: typeof EventsEventIdRoute
   SpeakersSpeakerIdRoute: typeof SpeakersSpeakerIdRoute
+  ProposalsIndexRoute: typeof ProposalsIndexRoute
   SpeakersIndexRoute: typeof SpeakersIndexRoute
 }
 
@@ -113,6 +131,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SpeakersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/proposals/': {
+      id: '/proposals/'
+      path: '/proposals'
+      fullPath: '/proposals'
+      preLoaderRoute: typeof ProposalsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/speakers/$speakerId': {
       id: '/speakers/$speakerId'
       path: '/speakers/$speakerId'
@@ -135,6 +160,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   EventsEventIdRoute: EventsEventIdRoute,
   SpeakersSpeakerIdRoute: SpeakersSpeakerIdRoute,
+  ProposalsIndexRoute: ProposalsIndexRoute,
   SpeakersIndexRoute: SpeakersIndexRoute,
 }
 export const routeTree = rootRouteImport

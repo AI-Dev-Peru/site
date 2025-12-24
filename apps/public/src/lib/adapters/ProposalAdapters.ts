@@ -1,4 +1,4 @@
-import type { ProposalRepository, TalkProposal, CreateProposalDTO } from '../repositories/ProposalRepository';
+import type { ProposalRepository, TalkProposal, CreateProposalDTO, ProposalStatus } from '../repositories/ProposalRepository';
 import { getSupabase } from '../supabase';
 
 interface DbProposal {
@@ -6,8 +6,10 @@ interface DbProposal {
     full_name: string;
     email: string;
     phone: string;
+    title: string;
     description: string;
     duration: '15' | '30';
+    status: ProposalStatus;
     linkedin?: string;
     github?: string;
     twitter?: string;
@@ -22,6 +24,7 @@ export class InMemoryProposalRepository implements ProposalRepository {
         const proposal: TalkProposal = {
             ...data,
             id: Math.random().toString(36).substring(7),
+            status: 'proposed',
             createdAt: new Date().toISOString()
         };
         this.proposals.push(proposal);
@@ -42,6 +45,7 @@ export class LocalStorageProposalRepository implements ProposalRepository {
         const proposal: TalkProposal = {
             ...data,
             id: Math.random().toString(36).substring(7),
+            status: 'proposed',
             createdAt: new Date().toISOString()
         };
         proposals.push(proposal);
@@ -76,6 +80,7 @@ export class SupabaseProposalRepository implements ProposalRepository {
         return {
             ...data,
             id: 'submitted-' + Math.random().toString(36).substring(7),
+            status: 'proposed',
             createdAt: new Date().toISOString()
         };
     }
@@ -99,8 +104,10 @@ export class SupabaseProposalRepository implements ProposalRepository {
             fullName: db.full_name,
             email: db.email,
             phone: db.phone,
+            title: db.title,
             description: db.description,
             duration: db.duration,
+            status: db.status,
             linkedin: db.linkedin,
             github: db.github,
             twitter: db.twitter,
@@ -108,11 +115,12 @@ export class SupabaseProposalRepository implements ProposalRepository {
         };
     }
 
-    private mapToDb(data: CreateProposalDTO): Omit<DbProposal, 'id' | 'created_at'> {
+    private mapToDb(data: CreateProposalDTO): Omit<DbProposal, 'id' | 'created_at' | 'status'> {
         return {
             full_name: data.fullName,
             email: data.email,
             phone: data.phone,
+            title: data.title,
             description: data.description,
             duration: data.duration,
             linkedin: data.linkedin,

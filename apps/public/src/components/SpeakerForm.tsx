@@ -10,6 +10,7 @@ export function SpeakerForm() {
         fullName: '',
         email: '',
         phone: '',
+        title: '',
         description: '',
         duration: '15' as '15' | '30',
         linkedin: '',
@@ -114,6 +115,18 @@ export function SpeakerForm() {
                             <option value="30" className="bg-deep-space">Standard Talk (30 mins)</option>
                         </select>
                     </div>
+                </div>
+
+                <div className="space-y-2">
+                    <label className="text-sm font-bold text-white/60 uppercase tracking-widest pl-1">Título de la charla *</label>
+                    <input
+                        required
+                        type="text"
+                        value={formData.title}
+                        onChange={e => setFormData({ ...formData, title: e.target.value })}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-electric-violet/50 transition-colors"
+                        placeholder="Ej: Construyendo agentes con LangChain"
+                    />
                 </div>
 
                 <div className="space-y-2">

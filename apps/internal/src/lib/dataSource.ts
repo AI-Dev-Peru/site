@@ -9,6 +9,10 @@ import { SupabaseSpeakerRepository } from './adapters/speakers/SupabaseSpeakerRe
 import { SupabaseEventRepository } from './adapters/events/SupabaseEventRepository';
 import { LocalStorageAuthRepository } from './adapters/auth/LocalStorageAuthRepository';
 import { SupabaseAuthRepository } from './adapters/auth/SupabaseAuthRepository';
+import { ProposalRepository } from './repositories/ProposalRepository';
+import { InMemoryProposalRepository } from './adapters/proposals/InMemoryProposalRepository';
+import { LocalStorageProposalRepository } from './adapters/proposals/LocalStorageProposalRepository';
+import { SupabaseProposalRepository } from './adapters/proposals/SupabaseProposalRepository';
 
 export type DataSourceType = 'in-memory' | 'local-storage' | 'supabase';
 
@@ -19,6 +23,7 @@ class DataSourceFactory {
     private static speakerRepository: SpeakerRepository;
     private static eventRepository: EventRepository;
     private static authRepository: AuthRepository;
+    private static proposalRepository: ProposalRepository;
 
     static getSpeakerRepository(): SpeakerRepository {
         if (!this.speakerRepository) {
@@ -39,6 +44,13 @@ class DataSourceFactory {
             this.authRepository = this.createAuthRepository();
         }
         return this.authRepository;
+    }
+
+    static getProposalRepository(): ProposalRepository {
+        if (!this.proposalRepository) {
+            this.proposalRepository = this.createProposalRepository();
+        }
+        return this.proposalRepository;
     }
 
     private static createSpeakerRepository(): SpeakerRepository {
@@ -74,8 +86,21 @@ class DataSourceFactory {
                 return new LocalStorageAuthRepository();
         }
     }
+
+    private static createProposalRepository(): ProposalRepository {
+        switch (DATA_SOURCE) {
+            case 'local-storage':
+                return new LocalStorageProposalRepository();
+            case 'supabase':
+                return new SupabaseProposalRepository();
+            case 'in-memory':
+            default:
+                return new InMemoryProposalRepository();
+        }
+    }
 }
 
 export const speakersRepository = DataSourceFactory.getSpeakerRepository();
 export const eventsRepository = DataSourceFactory.getEventRepository();
 export const authRepository = DataSourceFactory.getAuthRepository();
+export const proposalsRepository = DataSourceFactory.getProposalRepository();

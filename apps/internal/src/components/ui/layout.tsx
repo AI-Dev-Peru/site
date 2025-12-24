@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Calendar, Users, BarChart3, Megaphone, LogOut } from 'lucide-react'
+import { Calendar, Users, BarChart3, Megaphone, LogOut, Terminal } from 'lucide-react'
 import { useAuth } from '../../features/auth/AuthContext'
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -24,6 +24,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                         <div className="flex items-center gap-1">
                             <NavLink to="/" icon={Calendar} label="Events" />
                             <NavLink to="/speakers" icon={Users} label="Speakers" />
+                            <NavLink to="/proposals" icon={Terminal} label="Proposals" />
                             <NavLink to="/marketing" icon={Megaphone} label="Marketing" />
                             <NavLink to="/analytics" icon={BarChart3} label="Analytics" />
                         </div>
