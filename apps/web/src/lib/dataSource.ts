@@ -3,6 +3,7 @@ import { type EventRepository } from './repositories/EventRepository';
 import { type AuthRepository } from './repositories/AuthRepository';
 import { InMemorySpeakerRepository } from './adapters/speakers/InMemorySpeakerRepository';
 import { InMemoryEventRepository } from './adapters/events/InMemoryEventRepository';
+import { InMemoryAuthRepository } from './adapters/auth/InMemoryAuthRepository';
 
 import { LocalStorageSpeakerRepository } from './adapters/speakers/LocalStorageSpeakerRepository';
 import { LocalStorageEventRepository } from './adapters/events/LocalStorageEventRepository';
@@ -82,6 +83,8 @@ class DataSourceFactory {
         switch (DATA_SOURCE) {
             case 'supabase':
                 return new SupabaseAuthRepository();
+            case 'in-memory':
+                return new InMemoryAuthRepository();
             // Default to local storage auth for local dev
             default:
                 return new LocalStorageAuthRepository();

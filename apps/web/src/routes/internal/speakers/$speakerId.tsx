@@ -19,7 +19,7 @@ function SpeakerPage() {
     return <SpeakerDetail speakerId={speakerId} />
 }
 
-function NewSpeaker() {
+export function NewSpeaker() {
     const navigate = useNavigate()
     const createSpeaker = useCreateSpeaker()
     const [formData, setFormData] = useState({
@@ -31,8 +31,8 @@ function NewSpeaker() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        const newSpeaker = await createSpeaker.mutateAsync(formData)
-        navigate({ to: '/internal/speakers/$speakerId', params: { speakerId: newSpeaker.id } })
+        await createSpeaker.mutateAsync(formData)
+        navigate({ to: '/internal/speakers' })
     }
 
     const handleChange = (field: string, value: string) => {
@@ -86,7 +86,7 @@ function NewSpeaker() {
                                 <label className="text-xs font-medium text-zinc-500 uppercase">Role</label>
                                 <input
                                     type="text"
-                                    required
+
                                     value={formData.role}
                                     onChange={(e) => handleChange('role', e.target.value)}
                                     className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-white focus:ring-1 focus:ring-zinc-600 outline-none"
@@ -190,6 +190,7 @@ function SpeakerEditor({ speaker }: { speaker: Speaker }) {
 
     const handleSave = async () => {
         await updateSpeaker.mutateAsync({ id: speaker.id, data: formData })
+        navigate({ to: '/internal/speakers' })
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

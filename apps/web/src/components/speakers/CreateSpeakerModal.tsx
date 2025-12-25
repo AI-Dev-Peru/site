@@ -58,10 +58,10 @@ export function CreateSpeakerModal({ isOpen, onClose }: CreateSpeakerModalProps)
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-xs font-medium text-zinc-500 uppercase">Role *</label>
+                        <label className="text-xs font-medium text-zinc-500 uppercase">Role</label>
                         <input
                             type="text"
-                            required
+
                             value={formData.role}
                             onChange={(e) => handleChange('role', e.target.value)}
                             className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-white focus:ring-1 focus:ring-zinc-600 outline-none"

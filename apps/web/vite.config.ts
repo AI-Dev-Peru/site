@@ -35,6 +35,9 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
+    env: {
+      VITE_DATA_SOURCE: 'in-memory'
+    },
     server: {
       deps: {
         inline: ['@testing-library/dom', '@testing-library/react'],

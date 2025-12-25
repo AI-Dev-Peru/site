@@ -1,7 +1,7 @@
 export interface Speaker {
     id: string;
     name: string;
-    role: string;
+    role?: string;
     company?: string;
     bio?: string;
     avatarUrl?: string;
@@ -13,7 +13,7 @@ export interface Speaker {
 
 export interface CreateSpeakerDTO {
     name: string;
-    role: string;
+    role?: string;
     company?: string;
     email?: string;
 }
