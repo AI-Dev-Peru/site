@@ -28,7 +28,7 @@ export function Dashboard() {
                         label="All Years"
                         value={yearFilter}
                         onChange={setYearFilter}
-                        options={['2024', '2025']}
+                        options={['2024', '2025', '2026']}
                     />
                     <FilterDropdown
                         label="All Status"

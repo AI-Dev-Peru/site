@@ -15,8 +15,10 @@ import { Route as InternalIndexRouteImport } from './routes/internal/index'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as InternalLoginRouteImport } from './routes/internal/login'
 import { Route as PublicProponerCharlaRouteImport } from './routes/_public/proponer-charla'
+import { Route as PublicPrivacyPolicyRouteImport } from './routes/_public/privacy-policy'
 import { Route as PublicNosotrosRouteImport } from './routes/_public/nosotros'
 import { Route as PublicEventosRouteImport } from './routes/_public/eventos'
+import { Route as PublicCodigoDeConductaRouteImport } from './routes/_public/codigo-de-conducta'
 import { Route as InternalSpeakersIndexRouteImport } from './routes/internal/speakers/index'
 import { Route as InternalProposalsIndexRouteImport } from './routes/internal/proposals/index'
 import { Route as InternalSpeakersSpeakerIdRouteImport } from './routes/internal/speakers/$speakerId'
@@ -51,6 +53,11 @@ const PublicProponerCharlaRoute = PublicProponerCharlaRouteImport.update({
   path: '/proponer-charla',
   getParentRoute: () => PublicRoute,
 } as any)
+const PublicPrivacyPolicyRoute = PublicPrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => PublicRoute,
+} as any)
 const PublicNosotrosRoute = PublicNosotrosRouteImport.update({
   id: '/nosotros',
   path: '/nosotros',
@@ -59,6 +66,11 @@ const PublicNosotrosRoute = PublicNosotrosRouteImport.update({
 const PublicEventosRoute = PublicEventosRouteImport.update({
   id: '/eventos',
   path: '/eventos',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicCodigoDeConductaRoute = PublicCodigoDeConductaRouteImport.update({
+  id: '/codigo-de-conducta',
+  path: '/codigo-de-conducta',
   getParentRoute: () => PublicRoute,
 } as any)
 const InternalSpeakersIndexRoute = InternalSpeakersIndexRouteImport.update({
@@ -85,8 +97,10 @@ const InternalEventsEventIdRoute = InternalEventsEventIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/internal': typeof InternalRouteWithChildren
+  '/codigo-de-conducta': typeof PublicCodigoDeConductaRoute
   '/eventos': typeof PublicEventosRoute
   '/nosotros': typeof PublicNosotrosRoute
+  '/privacy-policy': typeof PublicPrivacyPolicyRoute
   '/proponer-charla': typeof PublicProponerCharlaRoute
   '/internal/login': typeof InternalLoginRoute
   '/': typeof PublicIndexRoute
@@ -97,8 +111,10 @@ export interface FileRoutesByFullPath {
   '/internal/speakers': typeof InternalSpeakersIndexRoute
 }
 export interface FileRoutesByTo {
+  '/codigo-de-conducta': typeof PublicCodigoDeConductaRoute
   '/eventos': typeof PublicEventosRoute
   '/nosotros': typeof PublicNosotrosRoute
+  '/privacy-policy': typeof PublicPrivacyPolicyRoute
   '/proponer-charla': typeof PublicProponerCharlaRoute
   '/internal/login': typeof InternalLoginRoute
   '/': typeof PublicIndexRoute
@@ -112,8 +128,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_public': typeof PublicRouteWithChildren
   '/internal': typeof InternalRouteWithChildren
+  '/_public/codigo-de-conducta': typeof PublicCodigoDeConductaRoute
   '/_public/eventos': typeof PublicEventosRoute
   '/_public/nosotros': typeof PublicNosotrosRoute
+  '/_public/privacy-policy': typeof PublicPrivacyPolicyRoute
   '/_public/proponer-charla': typeof PublicProponerCharlaRoute
   '/internal/login': typeof InternalLoginRoute
   '/_public/': typeof PublicIndexRoute
@@ -127,8 +145,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/internal'
+    | '/codigo-de-conducta'
     | '/eventos'
     | '/nosotros'
+    | '/privacy-policy'
     | '/proponer-charla'
     | '/internal/login'
     | '/'
@@ -139,8 +159,10 @@ export interface FileRouteTypes {
     | '/internal/speakers'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/codigo-de-conducta'
     | '/eventos'
     | '/nosotros'
+    | '/privacy-policy'
     | '/proponer-charla'
     | '/internal/login'
     | '/'
@@ -153,8 +175,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_public'
     | '/internal'
+    | '/_public/codigo-de-conducta'
     | '/_public/eventos'
     | '/_public/nosotros'
+    | '/_public/privacy-policy'
     | '/_public/proponer-charla'
     | '/internal/login'
     | '/_public/'
@@ -214,6 +238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicProponerCharlaRouteImport
       parentRoute: typeof PublicRoute
     }
+    '/_public/privacy-policy': {
+      id: '/_public/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PublicPrivacyPolicyRouteImport
+      parentRoute: typeof PublicRoute
+    }
     '/_public/nosotros': {
       id: '/_public/nosotros'
       path: '/nosotros'
@@ -226,6 +257,13 @@ declare module '@tanstack/react-router' {
       path: '/eventos'
       fullPath: '/eventos'
       preLoaderRoute: typeof PublicEventosRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/codigo-de-conducta': {
+      id: '/_public/codigo-de-conducta'
+      path: '/codigo-de-conducta'
+      fullPath: '/codigo-de-conducta'
+      preLoaderRoute: typeof PublicCodigoDeConductaRouteImport
       parentRoute: typeof PublicRoute
     }
     '/internal/speakers/': {
@@ -260,15 +298,19 @@ declare module '@tanstack/react-router' {
 }
 
 interface PublicRouteChildren {
+  PublicCodigoDeConductaRoute: typeof PublicCodigoDeConductaRoute
   PublicEventosRoute: typeof PublicEventosRoute
   PublicNosotrosRoute: typeof PublicNosotrosRoute
+  PublicPrivacyPolicyRoute: typeof PublicPrivacyPolicyRoute
   PublicProponerCharlaRoute: typeof PublicProponerCharlaRoute
   PublicIndexRoute: typeof PublicIndexRoute
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
+  PublicCodigoDeConductaRoute: PublicCodigoDeConductaRoute,
   PublicEventosRoute: PublicEventosRoute,
   PublicNosotrosRoute: PublicNosotrosRoute,
+  PublicPrivacyPolicyRoute: PublicPrivacyPolicyRoute,
   PublicProponerCharlaRoute: PublicProponerCharlaRoute,
   PublicIndexRoute: PublicIndexRoute,
 }

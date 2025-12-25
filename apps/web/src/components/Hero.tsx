@@ -134,7 +134,7 @@ export function Hero() {
                     className="flex flex-col sm:flex-row items-center gap-4"
                 >
                     <a
-                        href="https://ai-dev-peru.kit.com/bfdfeff5d9"
+                        href="https://chat.whatsapp.com/CRpeAxoBrsGACIRaqTfmez"
                         target="_blank"
                         rel="noopener noreferrer"
                         className={cn(
