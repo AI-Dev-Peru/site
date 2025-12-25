@@ -15,6 +15,7 @@ import { Route as InternalIndexRouteImport } from './routes/internal/index'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as InternalLoginRouteImport } from './routes/internal/login'
 import { Route as PublicProponerCharlaRouteImport } from './routes/_public/proponer-charla'
+import { Route as PublicNosotrosRouteImport } from './routes/_public/nosotros'
 import { Route as PublicEventosRouteImport } from './routes/_public/eventos'
 import { Route as InternalSpeakersIndexRouteImport } from './routes/internal/speakers/index'
 import { Route as InternalProposalsIndexRouteImport } from './routes/internal/proposals/index'
@@ -50,6 +51,11 @@ const PublicProponerCharlaRoute = PublicProponerCharlaRouteImport.update({
   path: '/proponer-charla',
   getParentRoute: () => PublicRoute,
 } as any)
+const PublicNosotrosRoute = PublicNosotrosRouteImport.update({
+  id: '/nosotros',
+  path: '/nosotros',
+  getParentRoute: () => PublicRoute,
+} as any)
 const PublicEventosRoute = PublicEventosRouteImport.update({
   id: '/eventos',
   path: '/eventos',
@@ -80,6 +86,7 @@ const InternalEventsEventIdRoute = InternalEventsEventIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/internal': typeof InternalRouteWithChildren
   '/eventos': typeof PublicEventosRoute
+  '/nosotros': typeof PublicNosotrosRoute
   '/proponer-charla': typeof PublicProponerCharlaRoute
   '/internal/login': typeof InternalLoginRoute
   '/': typeof PublicIndexRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/eventos': typeof PublicEventosRoute
+  '/nosotros': typeof PublicNosotrosRoute
   '/proponer-charla': typeof PublicProponerCharlaRoute
   '/internal/login': typeof InternalLoginRoute
   '/': typeof PublicIndexRoute
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/_public': typeof PublicRouteWithChildren
   '/internal': typeof InternalRouteWithChildren
   '/_public/eventos': typeof PublicEventosRoute
+  '/_public/nosotros': typeof PublicNosotrosRoute
   '/_public/proponer-charla': typeof PublicProponerCharlaRoute
   '/internal/login': typeof InternalLoginRoute
   '/_public/': typeof PublicIndexRoute
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/internal'
     | '/eventos'
+    | '/nosotros'
     | '/proponer-charla'
     | '/internal/login'
     | '/'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/eventos'
+    | '/nosotros'
     | '/proponer-charla'
     | '/internal/login'
     | '/'
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/_public'
     | '/internal'
     | '/_public/eventos'
+    | '/_public/nosotros'
     | '/_public/proponer-charla'
     | '/internal/login'
     | '/_public/'
@@ -202,6 +214,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicProponerCharlaRouteImport
       parentRoute: typeof PublicRoute
     }
+    '/_public/nosotros': {
+      id: '/_public/nosotros'
+      path: '/nosotros'
+      fullPath: '/nosotros'
+      preLoaderRoute: typeof PublicNosotrosRouteImport
+      parentRoute: typeof PublicRoute
+    }
     '/_public/eventos': {
       id: '/_public/eventos'
       path: '/eventos'
@@ -242,12 +261,14 @@ declare module '@tanstack/react-router' {
 
 interface PublicRouteChildren {
   PublicEventosRoute: typeof PublicEventosRoute
+  PublicNosotrosRoute: typeof PublicNosotrosRoute
   PublicProponerCharlaRoute: typeof PublicProponerCharlaRoute
   PublicIndexRoute: typeof PublicIndexRoute
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
   PublicEventosRoute: PublicEventosRoute,
+  PublicNosotrosRoute: PublicNosotrosRoute,
   PublicProponerCharlaRoute: PublicProponerCharlaRoute,
   PublicIndexRoute: PublicIndexRoute,
 }

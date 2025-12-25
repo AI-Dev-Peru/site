@@ -19,7 +19,7 @@ export function Navigation() {
             <div className="flex items-center gap-8">
                 <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-white/60">
                     <Link to="/eventos" className="hover:text-white transition-colors">Eventos</Link>
-                    <Link to="/" hash="nosotros" className="hover:text-white transition-colors">Nosotros</Link>
+                    <Link to="/nosotros" className="hover:text-white transition-colors">Nosotros</Link>
                     <Link to="/" hash="speaker" className="hover:text-white transition-colors">Ser Speaker</Link>
                 </nav>
 
