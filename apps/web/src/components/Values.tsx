@@ -1,5 +1,5 @@
 import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
-import { Users, Cpu, BrainCircuit, TrendingUp } from "lucide-react";
+import { Users, Sparkles, BrainCircuit, TrendingUp } from "lucide-react";
 import type { MouseEvent, ReactNode } from "react";
 import { cn } from "../lib/design-system";
 
@@ -14,25 +14,25 @@ const values: CommunityValue[] = [
     {
         icon: <Users className="w-8 h-8" />,
         title: "Meetups Mensuales",
-        description: "Espacios para compartir experiencias reales, desafíos técnicos y conectar con otros builders de la comunidad.",
+        description: "Nos juntaremos todos los meses para compartir experiencias reales, desafíos técnicos y conectar con otros builders de la comunidad.",
         gradient: "from-blue-500 to-cyan-500"
     },
     {
-        icon: <Cpu className="w-8 h-8" />,
-        title: "Vanguardia Técnica",
-        description: "Exploramos modelos y herramientas para entender no solo cómo usarlas, sino cómo integrarlas con responsabilidad y calidad.",
+        icon: <Sparkles className="w-8 h-8" />,
+        title: "Mantente actualizado",
+        description: "Cada meetup empezará con un recap de nuevos modelos y herramientas - ¡la IA avanza tan rápido, que nunca nos quedaremos sin temas!",
         gradient: "from-fuchsia-500 to-purple-500"
     },
     {
         icon: <BrainCircuit className="w-8 h-8" />,
         title: "Procesos y Mindset",
-        description: "Adoptamos nuevos patrones de pensamiento y flujos de trabajo que potencian nuestra productividad sin sacrificar la arquitectura.",
+        description: "La IA ha cambiado nuestra forma de trabajar. Aprende cómo cada equipo está evolucionando sus procesos de desarrollo.",
         gradient: "from-emerald-500 to-green-500"
     },
     {
         icon: <TrendingUp className="w-8 h-8" />,
         title: "Evolución del Rol",
-        description: "Navegamos juntos el futuro de nuestra carrera, definiendo las habilidades que nos permitirán liderar en esta era.",
+        description: "Navegamos juntos el futuro de nuestra carrera, explorando las habilidades que nos permitirán liderar en esta era.",
         gradient: "from-orange-500 to-yellow-500"
     }
 ];
@@ -102,7 +102,7 @@ export function Values() {
                         MÁS ALLÁ DEL <span className="text-electric-violet">CÓDIGO</span>
                     </h2>
                     <p className="text-lg md:text-xl text-white/60 leading-relaxed">
-                        Mientras la IA se encarga de automatizar la implementación, nosotros nos enfocamos en lo que realmente importa: <span className="text-white font-bold">la conexión humana</span>, el entendimiento del problema y la excelencia técnica que perdura.
+                        En un mundo donde la IA escribe cada vez más código, <span className="text-white font-bold">¿donde quedamos nosotros?</span> ¿cómo evolucionará el desarrollo de software, y cómo podemos navegar en medio de estos cambios?
                     </p>
                 </div>
                 <div className="hidden md:block w-32 h-1 bg-white/10 rounded-full mb-2" />

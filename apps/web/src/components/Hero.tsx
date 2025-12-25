@@ -125,8 +125,8 @@ export function Hero() {
                     variants={animations.fadeIn}
                     className="text-lg md:text-xl text-white/60 max-w-xl mb-10 font-medium leading-relaxed"
                 >
-                    Construimos el futuro del desarrollo uniendo la agilidad de la IA con el rigor de la ingeniería.
-                    Un espacio para aprender, compartir y elevar el estándar de nuestro <span className="text-electric-violet">craft</span> en comunidad.
+                    Comunidad para programadores, builders y líderes que reconocen que
+                    <span className="text-electric-violet"> la IA está revolucionando </span> los procesos de desarrollo e ingeniería. Aprendamos juntos.
                 </motion.p>
 
                 <motion.div
