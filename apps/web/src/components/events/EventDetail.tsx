@@ -75,7 +75,7 @@ function EventEditor({ event }: { event: Event }) {
     const handleDelete = async () => {
         if (confirm('Are you sure you want to delete this event?')) {
             await deleteEvent.mutateAsync(event.id)
-            navigate({ to: '/' })
+            navigate({ to: '/internal' })
         }
     }
 
@@ -135,7 +135,7 @@ function EventEditor({ event }: { event: Event }) {
             <div className="flex-none space-y-4 pb-4 border-b border-zinc-800">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Link to="/" className="p-1.5 -ml-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-full transition-colors">
+                        <Link to="/internal" className="p-1.5 -ml-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-full transition-colors">
                             <ArrowLeft className="w-4 h-4" />
                         </Link>
                         <div>
