@@ -131,7 +131,7 @@ export function Hero() {
                     className="flex flex-col sm:flex-row items-center gap-4"
                 >
                     <a
-                        href="https://chat.whatsapp.com/CRpeAxoBrsGACIRaqTfmez"
+                        href="https://chat.whatsapp.com/FFCxB1vvvx61UgRKjLtEco"
                         target="_blank"
                         rel="noopener noreferrer"
                         className={cn(
