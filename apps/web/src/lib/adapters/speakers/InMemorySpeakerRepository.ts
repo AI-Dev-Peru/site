@@ -52,12 +52,39 @@ export class InMemorySpeakerRepository implements SpeakerRepository {
             id: Math.random().toString(36).substr(2, 9),
             ...data,
         };
+
+        if (data.avatar) {
+            const base64 = await new Promise<string>((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result as string);
+                reader.readAsDataURL(data.avatar!);
+            });
+            newSpeaker.avatarUrl = base64;
+            // @ts-expect-error remove the File object from the DTO properties that were spread
+            delete newSpeaker.avatar;
+        }
+
         this.speakers = [newSpeaker, ...this.speakers];
         return newSpeaker;
     }
 
     async updateSpeaker(id: string, data: Partial<Speaker>): Promise<Speaker> {
         await new Promise((resolve) => setTimeout(resolve, 500));
+
+        // Handle avatar file conversion if present
+        // @ts-expect-error - avatar might be a File from the form
+        if (data.avatar && data.avatar instanceof File) {
+            const base64 = await new Promise<string>((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result as string);
+                // @ts-expect-error - avatar is a File here
+                reader.readAsDataURL(data.avatar!);
+            });
+            data.avatarUrl = base64;
+            // @ts-expect-error - remove the File object from the data
+            delete data.avatar;
+        }
+
         this.speakers = this.speakers.map((s) => (s.id === id ? { ...s, ...data } : s));
         return this.speakers.find((s) => s.id === id)!;
     }

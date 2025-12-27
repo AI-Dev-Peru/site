@@ -37,7 +37,7 @@ function NosotrosPage() {
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className="text-5xl md:text-7xl font-display font-bold leading-[1.1] tracking-tighter mb-8"
                     >
-                        Una comunidad unida para <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-violet to-blue-400">redefinir el futuro</span>.
+                        Una comunidad unida para <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-violet to-blue-400">redefinir tu carrera</span>.
                     </motion.h1>
 
                     <motion.p

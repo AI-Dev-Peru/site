@@ -36,7 +36,8 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
     env: {
-      VITE_DATA_SOURCE: 'in-memory'
+      VITE_DATA_SOURCE: 'in-memory',
+      MODE: 'test'
     },
     server: {
       deps: {

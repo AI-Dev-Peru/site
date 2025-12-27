@@ -11,7 +11,7 @@ function LoginPage() {
     const [isSigningIn, setIsSigningIn] = useState(false)
 
     if (!isLoading && user) {
-        return <Navigate to="/" />
+        return <Navigate to="/internal" />
     }
 
     const handleLogin = async () => {

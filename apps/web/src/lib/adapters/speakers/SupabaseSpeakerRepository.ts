@@ -25,9 +25,33 @@ export class SupabaseSpeakerRepository implements SpeakerRepository {
     }
 
     async createSpeaker(data: CreateSpeakerDTO): Promise<Speaker> {
+        let avatarUrl: string | undefined;
+
+        if (data.avatar) {
+            const fileName = `${Date.now()}-${data.avatar.name}`;
+            const { error: uploadError } = await getSupabase()
+                .storage
+                .from('speakers')
+                .upload(fileName, data.avatar);
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = getSupabase()
+                .storage
+                .from('speakers')
+                .getPublicUrl(fileName);
+
+            avatarUrl = publicUrl;
+        }
+
+        const dbData = this.mapToDb(data);
+        if (avatarUrl) {
+            dbData.avatar_url = avatarUrl;
+        }
+
         const { data: speaker, error } = await getSupabase()
             .from('speakers')
-            .insert(this.mapToDb(data))
+            .insert(dbData)
             .select()
             .single();
 

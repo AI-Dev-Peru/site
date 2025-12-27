@@ -11,11 +11,7 @@ export class FakeSpeakerRepository extends InMemorySpeakerRepository {
     }
 
     override async createSpeaker(data: CreateSpeakerDTO): Promise<Speaker> {
-        const newSpeaker: Speaker = {
-            id: Math.random().toString(36).substr(2, 9),
-            ...data,
-        };
-        this.speakers = [newSpeaker, ...this.speakers];
-        return newSpeaker;
+        // Use parent implementation which handles avatar conversion
+        return super.createSpeaker(data);
     }
 }

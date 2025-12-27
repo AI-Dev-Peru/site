@@ -114,9 +114,17 @@ function SpeakerList() {
                                 <div className="space-y-4">
                                     {/* Avatar and name side by side */}
                                     <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center text-sm font-semibold text-zinc-300 shrink-0 group-hover:bg-zinc-700 transition-colors">
-                                            {initials}
-                                        </div>
+                                        {speaker.avatarUrl ? (
+                                            <img
+                                                src={speaker.avatarUrl}
+                                                alt={speaker.name}
+                                                className="w-12 h-12 rounded-full object-cover shrink-0 group-hover:ring-2 group-hover:ring-zinc-700 transition-all"
+                                            />
+                                        ) : (
+                                            <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center text-sm font-semibold text-zinc-300 shrink-0 group-hover:bg-zinc-700 transition-colors">
+                                                {initials}
+                                            </div>
+                                        )}
                                         <div className="min-w-0 flex-1">
                                             <h3 className="text-sm font-semibold text-white truncate">{speaker.name}</h3>
                                             <p className="text-xs text-zinc-400 truncate">

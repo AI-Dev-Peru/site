@@ -16,4 +16,5 @@ export interface CreateSpeakerDTO {
     role?: string;
     company?: string;
     email?: string;
+    avatar?: File;
 }

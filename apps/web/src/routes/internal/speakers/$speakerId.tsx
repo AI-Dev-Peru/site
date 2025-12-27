@@ -22,7 +22,13 @@ function SpeakerPage() {
 export function NewSpeaker() {
     const navigate = useNavigate()
     const createSpeaker = useCreateSpeaker()
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<{
+        name: string;
+        role: string;
+        company: string;
+        email: string;
+        avatar?: File;
+    }>({
         name: '',
         role: '',
         company: '',
@@ -37,6 +43,12 @@ export function NewSpeaker() {
 
     const handleChange = (field: string, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }))
+    }
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setFormData(prev => ({ ...prev, avatar: e.target.files![0] }))
+        }
     }
 
     return (
@@ -78,6 +90,18 @@ export function NewSpeaker() {
                                     REQ
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Avatar */}
+                        <div className="space-y-2">
+                            <label htmlFor="new-speaker-avatar" className="text-xs font-medium text-zinc-500 uppercase">Avatar (Optional)</label>
+                            <input
+                                id="new-speaker-avatar"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                className="w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-zinc-800 file:text-white hover:file:bg-zinc-700"
+                            />
                         </div>
 
                         {/* Role and Company */}
@@ -182,7 +206,7 @@ function SpeakerDetail({ speakerId }: { speakerId: string }) {
     return <SpeakerEditor key={speaker.id} speaker={speaker} />
 }
 
-function SpeakerEditor({ speaker }: { speaker: Speaker }) {
+export function SpeakerEditor({ speaker }: { speaker: Speaker }) {
     const updateSpeaker = useUpdateSpeaker()
     const navigate = useNavigate()
 
@@ -196,6 +220,12 @@ function SpeakerEditor({ speaker }: { speaker: Speaker }) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleChange = (field: keyof Speaker, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }))
+    }
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setFormData(prev => ({ ...prev, avatar: e.target.files![0] }))
+        }
     }
 
     // Mock speaking history - in a real app this would come from the API
@@ -248,6 +278,21 @@ function SpeakerEditor({ speaker }: { speaker: Speaker }) {
                                 REQ
                             </div>
                         </div>
+                    </div>
+
+                    {/* Avatar */}
+                    <div className="space-y-2">
+                        <label htmlFor="edit-speaker-avatar" className="text-xs font-medium text-zinc-500 uppercase">Avatar (Optional)</label>
+                        <input
+                            id="edit-speaker-avatar"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-zinc-800 file:text-white hover:file:bg-zinc-700"
+                        />
+                        {formData.avatarUrl && (
+                            <div className="text-xs text-zinc-500">Current: {formData.avatarUrl.substring(0, 50)}...</div>
+                        )}
                     </div>
 
                     {/* Role and Company */}
