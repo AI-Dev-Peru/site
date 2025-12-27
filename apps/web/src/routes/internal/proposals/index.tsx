@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { useProposals } from '@/features/proposals/hooks'
-import { Mail, Phone, Linkedin, Github, Twitter, Clock, Calendar as CalendarIcon, MessageSquare, Tag, Filter } from 'lucide-react'
+import { useProposals, useUpdateProposalStatus } from '@/features/proposals/hooks'
+import { Mail, Phone, Linkedin, Github, Twitter, Clock, Calendar as CalendarIcon, Tag, Filter, Check, X } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
-import { type ProposalStatus } from '@/lib/repositories/ProposalRepository'
+import { type ProposalStatus, type TalkProposal } from '@/lib/repositories/ProposalRepository'
+import { AcceptProposalDialog } from '@/features/proposals/components/AcceptProposalDialog'
 
 export const Route = createFileRoute('/internal/proposals/')({
     component: ProposalList,
@@ -12,7 +13,9 @@ export const Route = createFileRoute('/internal/proposals/')({
 
 function ProposalList() {
     const { data: proposals, isLoading } = useProposals()
-    const [filter, setFilter] = useState<ProposalStatus | 'all'>('all')
+    const [filter, setFilter] = useState<ProposalStatus>('proposed')
+    const [selectedProposal, setSelectedProposal] = useState<TalkProposal | null>(null)
+    const updateStatus = useUpdateProposalStatus()
 
     if (isLoading) {
         return (
@@ -30,7 +33,7 @@ function ProposalList() {
         )
     }
 
-    const filteredProposals = proposals?.filter(p => filter === 'all' || p.status === filter)
+    const filteredProposals = proposals?.filter(p => p.status === filter)
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('es-PE', {
@@ -51,6 +54,12 @@ function ProposalList() {
         }
     }
 
+    const handleReject = (id: string) => {
+        if (confirm('Are you sure you want to reject this proposal?')) {
+            updateStatus.mutate({ id, status: 'rejected' })
+        }
+    }
+
     return (
         <div className="max-w-6xl space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -60,15 +69,6 @@ function ProposalList() {
                 </div>
 
                 <div className="flex items-center gap-2 bg-zinc-900/50 p-1 rounded-lg border border-zinc-800">
-                    <button
-                        onClick={() => setFilter('all')}
-                        className={cn(
-                            "px-3 py-1.5 rounded-md text-xs font-medium transition-all",
-                            filter === 'all' ? "bg-zinc-800 text-white shadow-sm" : "text-zinc-500 hover:text-zinc-300"
-                        )}
-                    >
-                        All
-                    </button>
                     <button
                         onClick={() => setFilter('proposed')}
                         className={cn(
@@ -102,15 +102,13 @@ function ProposalList() {
             {filteredProposals?.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-24 text-center bg-zinc-900/10 border border-zinc-800/50 rounded-3xl">
                     <div className="w-20 h-20 rounded-full bg-zinc-800/50 flex items-center justify-center mb-6">
-                        {filter === 'all' ? <MessageSquare className="w-10 h-10 text-zinc-600" /> : <Filter className="w-10 h-10 text-zinc-600" />}
+                        <Filter className="w-10 h-10 text-zinc-600" />
                     </div>
                     <h3 className="text-xl font-bold text-white mb-2">
-                        {filter === 'all' ? 'No proposals yet' : `No ${filter} proposals`}
+                        No {filter} proposals
                     </h3>
                     <p className="text-zinc-400 max-w-sm">
-                        {filter === 'all'
-                            ? "When people submit the \"Quiero ser speaker\" form, they will show up here."
-                            : `Try changing the filter to see other submissions.`}
+                        Try changing the filter to see other submissions.
                     </p>
                 </div>
             ) : (
@@ -127,6 +125,25 @@ function ProposalList() {
                                 </div>
 
                                 <div className="flex items-center gap-3 shrink-0">
+                                    {filter === 'proposed' && (
+                                        <div className="flex items-center gap-2 mr-2">
+                                            <button
+                                                className="h-7 px-3 text-xs border border-zinc-700 hover:bg-zinc-800 text-zinc-300 rounded-md flex items-center transition-colors font-medium"
+                                                onClick={() => handleReject(proposal.id)}
+                                            >
+                                                <X className="w-3.5 h-3.5 mr-1.5" />
+                                                Reject
+                                            </button>
+                                            <button
+                                                className="h-7 px-3 text-xs bg-indigo-600 hover:bg-indigo-700 text-white border-0 rounded-md flex items-center transition-colors font-medium"
+                                                onClick={() => setSelectedProposal(proposal)}
+                                            >
+                                                <Check className="w-3.5 h-3.5 mr-1.5" />
+                                                Accept
+                                            </button>
+                                        </div>
+                                    )}
+
                                     <span className={cn(
                                         "px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border",
                                         getStatusColor(proposal.status)
@@ -194,6 +211,14 @@ function ProposalList() {
                         </div>
                     ))}
                 </div>
+            )}
+
+            {selectedProposal && (
+                <AcceptProposalDialog
+                    proposal={selectedProposal}
+                    open={!!selectedProposal}
+                    onOpenChange={(open) => !open && setSelectedProposal(null)}
+                />
             )}
         </div>
     )

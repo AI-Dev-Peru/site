@@ -34,7 +34,7 @@ const INITIAL_SPEAKERS: Speaker[] = [
 ];
 
 export class InMemorySpeakerRepository implements SpeakerRepository {
-    private speakers: Speaker[] = [...INITIAL_SPEAKERS];
+    protected speakers: Speaker[] = [...INITIAL_SPEAKERS];
 
     async getSpeakers(): Promise<Speaker[]> {
         await new Promise((resolve) => setTimeout(resolve, 500));

@@ -30,4 +30,5 @@ export interface CreateProposalDTO {
 export interface ProposalRepository {
     submitProposal(data: CreateProposalDTO): Promise<TalkProposal>;
     getProposals(): Promise<TalkProposal[]>;
+    updateProposalStatus(id: string, status: ProposalStatus): Promise<void>;
 }

@@ -1,4 +1,4 @@
-import type { ProposalRepository, TalkProposal, CreateProposalDTO } from '../../repositories/ProposalRepository';
+import type { ProposalRepository, TalkProposal, CreateProposalDTO, ProposalStatus } from '../../repositories/ProposalRepository';
 
 export class LocalStorageProposalRepository implements ProposalRepository {
     private STORAGE_KEY = 'ai_dev_peru_proposals';
@@ -19,5 +19,14 @@ export class LocalStorageProposalRepository implements ProposalRepository {
     async getProposals(): Promise<TalkProposal[]> {
         const stored = localStorage.getItem(this.STORAGE_KEY);
         return stored ? JSON.parse(stored) : [];
+    }
+
+    async updateProposalStatus(id: string, status: ProposalStatus): Promise<void> {
+        const proposals = await this.getProposals();
+        const index = proposals.findIndex(p => p.id === id);
+        if (index !== -1) {
+            proposals[index].status = status;
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(proposals));
+        }
     }
 }

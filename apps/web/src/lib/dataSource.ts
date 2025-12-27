@@ -16,16 +16,24 @@ import { InMemoryProposalRepository } from './adapters/proposals/InMemoryProposa
 import { LocalStorageProposalRepository } from './adapters/proposals/LocalStorageProposalRepository';
 import { SupabaseProposalRepository } from './adapters/proposals/SupabaseProposalRepository';
 
+import { FakeSpeakerRepository } from '../test/doubles/FakeSpeakerRepository';
+import { FakeEventRepository } from '../test/doubles/FakeEventRepository';
+import { FakeAuthRepository } from '../test/doubles/FakeAuthRepository';
+import { FakeProposalRepository } from '../test/doubles/FakeProposalRepository';
+
+// ...
+
+
 export type DataSourceType = 'in-memory' | 'local-storage' | 'supabase';
 
 // Configuration - this could come from env vars
 const DATA_SOURCE: DataSourceType = (import.meta.env.VITE_DATA_SOURCE as DataSourceType) || 'in-memory';
 
 class DataSourceFactory {
-    private static speakerRepository: SpeakerRepository;
-    private static eventRepository: EventRepository;
+    protected static speakerRepository: SpeakerRepository;
+    protected static eventRepository: EventRepository;
     private static authRepository: AuthRepository;
-    private static proposalRepository: ProposalRepository;
+    protected static proposalRepository: ProposalRepository;
 
     static getSpeakerRepository(): SpeakerRepository {
         if (!this.speakerRepository) {
@@ -56,6 +64,9 @@ class DataSourceFactory {
     }
 
     private static createSpeakerRepository(): SpeakerRepository {
+        if (import.meta.env.MODE === 'test') {
+            return new FakeSpeakerRepository();
+        }
         switch (DATA_SOURCE) {
             case 'local-storage':
                 return new LocalStorageSpeakerRepository();
@@ -68,6 +79,9 @@ class DataSourceFactory {
     }
 
     private static createEventRepository(): EventRepository {
+        if (import.meta.env.MODE === 'test') {
+            return new FakeEventRepository();
+        }
         switch (DATA_SOURCE) {
             case 'local-storage':
                 return new LocalStorageEventRepository();
@@ -80,6 +94,9 @@ class DataSourceFactory {
     }
 
     private static createAuthRepository(): AuthRepository {
+        if (import.meta.env.MODE === 'test') {
+            return new FakeAuthRepository();
+        }
         switch (DATA_SOURCE) {
             case 'supabase':
                 return new SupabaseAuthRepository();
@@ -92,6 +109,9 @@ class DataSourceFactory {
     }
 
     private static createProposalRepository(): ProposalRepository {
+        if (import.meta.env.MODE === 'test') {
+            return new FakeProposalRepository();
+        }
         switch (DATA_SOURCE) {
             case 'local-storage':
                 return new LocalStorageProposalRepository();

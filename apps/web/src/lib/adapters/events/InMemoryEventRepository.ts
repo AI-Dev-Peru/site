@@ -52,7 +52,7 @@ const INITIAL_EVENTS: Event[] = [
 ];
 
 export class InMemoryEventRepository implements EventRepository {
-    private events: Event[] = [...INITIAL_EVENTS];
+    protected events: Event[] = [...INITIAL_EVENTS];
 
     async getEvents(): Promise<Event[]> {
         await new Promise((resolve) => setTimeout(resolve, 500));

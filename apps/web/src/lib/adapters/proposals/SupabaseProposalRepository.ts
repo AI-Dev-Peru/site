@@ -38,6 +38,15 @@ export class SupabaseProposalRepository implements ProposalRepository {
         return (data as unknown as DbProposal[] || []).map(this.mapProposal);
     }
 
+    async updateProposalStatus(id: string, status: ProposalStatus): Promise<void> {
+        const { error } = await getSupabase()
+            .from('talk_proposals')
+            .update({ status })
+            .eq('id', id);
+
+        if (error) throw error;
+    }
+
     private mapProposal(db: DbProposal): TalkProposal {
         return {
             id: db.id,
