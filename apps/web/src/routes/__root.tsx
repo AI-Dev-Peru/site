@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react'
 import { createRootRoute, Outlet } from '@tanstack/react-router'
+import { Analytics } from '@vercel/analytics/react'
 
 const TanStackRouterDevtools =
     import.meta.env.PROD
@@ -10,13 +11,18 @@ const TanStackRouterDevtools =
             })),
         )
 
-export const Route = createRootRoute({
-    component: () => (
+export function RootComponent() {
+    return (
         <>
             <Outlet />
+            <Analytics />
             <Suspense>
                 <TanStackRouterDevtools />
             </Suspense>
         </>
-    ),
+    )
+}
+
+export const Route = createRootRoute({
+    component: RootComponent,
 })
