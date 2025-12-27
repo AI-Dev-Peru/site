@@ -60,3 +60,124 @@ export function useEvents() {
   return useQuery({ queryKey: ['events'], queryFn: () => repo.getEvents() });
 }
 ```
+
+# Testing Guidelines
+
+This project follows a strict **"No Mocks"** testing philosophy. We prefer **Fakes** and **Integration Tests** over Mocking and Unit Tests.
+
+## 1. Core Philosophy
+
+-   **Avoid `vi.mock()` for application logic.**
+    -   Do not mock invalid hooks (e.g., `vi.mock('../../hooks')`).
+    -   Do not mock services or internal modules.
+    -   Exceptions: `window.confirm`, `window.matchMedia`, or bulky 3rd party UI libraries that are hard to render in jsdom.
+-   **Use Fakes for Data Access.**
+    -   Instead of mocking the network or the data hook, we inject a "Fake" implementation of the Repository.
+    -   This allows `useQuery` and `useMutation` to actually run, testing the integration of the React component with the data layer.
+-   **Test User Interactions & End States.**
+    -   Do not test "was this function called?".
+    -   Test "after clicking this, did the UI update?" or "did the fake repository receive the data?".
+
+## 2. Architecture: Repositories & Fakes
+
+We use the Repository Pattern to abstract data access.
+
+### The Interface
+Every domain entity (Speaker, Event, Proposal) has a Repository interface.
+`src/lib/repositories/ProposalRepository.ts`
+
+### The Real Implementation
+We typically have `Supabase...Repository`, `LocalStorage...Repository`, etc.
+
+### The Fake Implementation (Test Double)
+We create a `Fake...Repository` that usually extends the `InMemory...Repository`.
+**Crucial:** The fake implementation must be **synchronous** (no artificial delays) to ensure tests are fast and reliable.
+
+```typescript
+// src/test/doubles/FakeProposalRepository.ts
+import { InMemoryProposalRepository } from '@/lib/adapters/proposals/InMemoryProposalRepository';
+
+export class FakeProposalRepository extends InMemoryProposalRepository {
+    // Helper method for test setup
+    givenProposals(proposals: TalkProposal[]) {
+        this.proposals = proposals;
+    }
+
+    // Override to ensure synchronous execution
+    override async getProposals(): Promise<TalkProposal[]> {
+        return [...this.proposals];
+    }
+}
+```
+
+## 3. Dependency Injection
+
+We use a central `dataSource.ts` to expose singleton instances of our repositories.
+**Key Pattern:** We check `import.meta.env.MODE === 'test'` to automatically inject Fakes during testing.
+
+```typescript
+// src/lib/dataSource.ts
+class DataSourceFactory {
+    static createProposalRepository(): ProposalRepository {
+        if (import.meta.env.MODE === 'test') {
+            return new FakeProposalRepository();
+        }
+        // ... return real implementations
+    }
+}
+```
+
+## 4. Writing Tests
+
+### Setup
+1.  **Wrapper:** Use `createTestWrapper` (exported from `@/test/client`) to wrap your component in necessary providers (like `QueryClientProvider`).
+2.  **Cast & Setup:** Import the singleton repository instance and cast it to its Fake type to access setup methods (like `given...`).
+3.  **Isolation:** Generate fresh mock data *inside* your test or `beforeEach` to avoid state pollution between tests.
+
+### Example
+
+```tsx
+// src/features/proposals/test/index.test.tsx
+import { render, screen, waitFor } from '@testing-library/react';
+import { proposalsRepository } from '@/lib/dataSource';
+import { FakeProposalRepository } from '@/test/doubles/FakeProposalRepository';
+import { createTestWrapper } from '@/test/client';
+
+describe('ProposalList', () => {
+    let fakeRepo: FakeProposalRepository;
+
+    beforeEach(() => {
+        // 1. Reset Repository
+        fakeRepo = proposalsRepository as unknown as FakeProposalRepository;
+        
+        // 2. Setup Data (State-based)
+        fakeRepo.givenProposals([
+            { id: '1', title: 'My Talk', status: 'proposed', ... }
+        ]);
+    });
+
+    it('should show proposals', async () => {
+        // 3. Render integrated component
+        render(<ProposalList />, { wrapper: createTestWrapper() });
+
+        // 4. Assert UI state (Wait for async data)
+        await waitFor(() => {
+             expect(screen.getByText('My Talk')).toBeInTheDocument();
+        });
+    });
+});
+```
+
+## 5. Selectors & interactions
+
+- Prefer `screen.getByRole('button', { name: "Name" })` over `getByText` where possible, but use `getByText` if the role is ambiguous or difficult to target.
+- Use `waitFor` when asserting UI changes that happen after a Promise resolves (e.g. data fetching).
+
+## 6. Definition of Done
+
+**No feature is complete without tests.**
+A task or feature request is only considered "Done" when:
+1.  The implementation is complete.
+2.  **Integration tests** (using Fakes) are written and passing.
+3.  The tests verify the end-user behavior and critical paths.
+
