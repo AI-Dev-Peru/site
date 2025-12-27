@@ -1,9 +1,9 @@
-import { useParams, useNavigate, Link } from '@tanstack/react-router'
+import { useParams, useNavigate } from '@tanstack/react-router'
 import { useEvent, useUpdateEvent, useDeleteEvent } from '../../features/events/hooks'
 import { useEventForm } from '../../features/events/useEventForm'
 import { type Event } from '../../features/events/types'
 import { ArrowLeft, ExternalLink, Calendar, Clock, MapPin, AlignLeft, MonitorPlay, FolderOpen, Users, Hash } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Agenda } from './Agenda'
 import { EventReadiness } from './EventReadiness'
 import { Skeleton } from '../ui/skeleton'
@@ -57,19 +57,42 @@ export function EventDetail() {
     return <EventEditor key={event.id} event={event} />
 }
 
-function EventEditor({ event }: { event: Event }) {
+export function EventEditor({ event }: { event: Event }) {
     const updateEvent = useUpdateEvent()
     const deleteEvent = useDeleteEvent()
     const navigate = useNavigate()
 
-    const { formData, updateField, updateLink, getLink, setFormData } = useEventForm(event)
+    const { formData, updateField, updateLink, getLink, setFormData, isDirty } = useEventForm(event)
     const [isCompletionModalOpen, setIsCompletionModalOpen] = useState(false)
     const [attendeeInput, setAttendeeInput] = useState(0)
     const [activeTab, setActiveTab] = useState('details')
     const [isPublishing, setIsPublishing] = useState(false)
 
+    // Warn before leaving page with unsaved changes
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (isDirty) {
+                e.preventDefault()
+                e.returnValue = ''
+            }
+        }
+
+        window.addEventListener('beforeunload', handleBeforeUnload)
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+    }, [isDirty])
+
     const handleSave = async () => {
         await updateEvent.mutateAsync({ id: event.id, data: formData })
+    }
+
+    const handleBack = () => {
+        if (isDirty) {
+            if (confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                navigate({ to: '/internal' })
+            }
+        } else {
+            navigate({ to: '/internal' })
+        }
     }
 
     const handleDelete = async () => {
@@ -130,17 +153,22 @@ function EventEditor({ event }: { event: Event }) {
     ]
 
     return (
-        <div className="max-w-4xl mx-auto flex flex-col h-[calc(100vh-4rem)]">
+        <div className="max-w-6xl mx-auto flex flex-col h-[calc(100vh-4rem)]">
             {/* Header */}
             <div className="flex-none space-y-4 pb-4 border-b border-zinc-800">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Link to="/internal" className="p-1.5 -ml-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-full transition-colors">
+                        <button
+                            onClick={handleBack}
+                            className="p-1.5 -ml-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-full transition-colors"
+                        >
                             <ArrowLeft className="w-4 h-4" />
-                        </Link>
+                        </button>
                         <div>
-                            <h1 className="text-xl font-bold text-white">{event.title}</h1>
-                            <p className="text-zinc-400 text-xs font-mono">{event.date}</p>
+                            <h1 className="text-xl font-bold text-white transition-opacity duration-300">
+                                {formData.title || event.title}
+                            </h1>
+                            <p className="text-zinc-400 text-xs font-mono">{formData.date || event.date}</p>
                         </div>
                     </div>
 
@@ -154,215 +182,251 @@ function EventEditor({ event }: { event: Event }) {
                             {formData.status === 'done' ? 'Done' : formData.status === 'published' ? 'Published' : 'In Progress'}
                         </div>
 
-                        {formData.status === 'draft' && (
-                            <button
-                                onClick={handlePublish}
-                                disabled={isPublishing}
-                                className="px-3 py-1.5 bg-white text-black text-xs font-medium rounded-md hover:bg-zinc-200 transition-colors disabled:opacity-50"
-                            >
-                                {isPublishing ? 'Publishing...' : 'Publish'}
-                            </button>
-                        )}
+                        <div className="h-4 w-px bg-zinc-800 mx-2" />
 
-                        {formData.status === 'published' && (
-                            <button
-                                onClick={handleMarkDone}
-                                className="px-3 py-1.5 bg-zinc-800 text-white border border-zinc-700 text-xs font-medium rounded-md hover:bg-zinc-700 transition-colors"
-                            >
-                                Mark as Done
-                            </button>
-                        )}
-
-                        {formData.status === 'draft' && (
-                            // Only for dev/testing or if they want to skip publish
-                            <button
-                                onClick={handleMarkDone}
-                                className="hidden px-3 py-1.5 bg-zinc-800 text-white border border-zinc-700 text-xs font-medium rounded-md hover:bg-zinc-700 transition-colors"
-                            >
-                                Mark as Done
-                            </button>
-                        )}
-                    </div>
-                </div>
-
-                <div className="flex gap-1">
-                    {tabs.map(tab => (
                         <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${activeTab === tab.id
-                                ? 'text-white bg-white/10'
-                                : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'
-                                }`}
+                            onClick={handleSave}
+                            disabled={updateEvent.isPending || !isDirty}
+                            className="px-4 py-2 bg-white text-black rounded-md text-sm font-medium hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {tab.label}
+                            {updateEvent.isPending ? 'Saving...' : 'Save Changes'}
                         </button>
-                    ))}
+                    </div>
                 </div>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto py-6">
-                {activeTab === 'details' && (
-                    <div className="max-w-2xl space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                        {/* Basic Info */}
-                        <section className="space-y-3">
-                            <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Event Basics</h3>
+            {/* Content Grid */}
+            <div className="flex-1 overflow-hidden">
+                <div className="h-full grid grid-cols-1 lg:grid-cols-3 gap-8 pt-6">
+                    {/* Main Content (Left Pane) */}
+                    <div className="lg:col-span-2 flex flex-col h-full overflow-hidden">
+                        {/* Tabs */}
+                        <div className="flex gap-1 mb-6 flex-none">
+                            {tabs.map(tab => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${activeTab === tab.id
+                                        ? 'text-white bg-white/10'
+                                        : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'
+                                        }`}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
 
-                            <div className="space-y-1">
-                                <label className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Event Title</label>
-                                <input
-                                    type="text"
-                                    value={formData.title || ''}
-                                    onChange={e => updateField('title', e.target.value)}
-                                    className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:ring-1 focus:ring-zinc-600 outline-none transition-all"
-                                />
-                            </div>
+                        {/* Tab Content */}
+                        <div className="flex-1 overflow-y-auto pr-2">
+                            {activeTab === 'details' && (
+                                <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-300 pb-10">
+                                    {/* Basic Info */}
+                                    <section className="space-y-3">
+                                        <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Event Basics</h3>
 
-                            <div className="grid grid-cols-2 gap-3">
-                                <IconInput
-                                    label="Date"
-                                    type="date"
-                                    value={formData.date}
-                                    onChange={v => updateField('date', v)}
-                                    icon={Calendar}
-                                />
-                                <IconInput
-                                    label="Time"
-                                    type="time"
-                                    value={formData.time}
-                                    onChange={v => updateField('time', v)}
-                                    icon={Clock}
-                                />
-                            </div>
+                                        <div className="space-y-1">
+                                            <label className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Event Title</label>
+                                            <input
+                                                type="text"
+                                                value={formData.title || ''}
+                                                onChange={e => updateField('title', e.target.value)}
+                                                className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:ring-1 focus:ring-zinc-600 outline-none transition-all"
+                                            />
+                                        </div>
 
-                            <div className="space-y-1">
-                                <label className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Format</label>
-                                <div className="relative">
-                                    <div className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500">
-                                        <Hash size={14} />
-                                    </div>
-                                    <select
-                                        value={formData.format}
-                                        onChange={e => updateField('format', e.target.value)}
-                                        className="w-full bg-black/50 border border-zinc-800 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:ring-1 focus:ring-zinc-600 outline-none transition-all appearance-none"
-                                    >
-                                        <option value="in-person">In-Person</option>
-                                        <option value="remote">Remote</option>
-                                        <option value="hybrid">Hybrid</option>
-                                    </select>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <IconInput
+                                                label="Date"
+                                                type="date"
+                                                value={formData.date}
+                                                onChange={v => updateField('date', v)}
+                                                icon={Calendar}
+                                            />
+                                            <IconInput
+                                                label="Time"
+                                                type="time"
+                                                value={formData.time}
+                                                onChange={v => updateField('time', v)}
+                                                icon={Clock}
+                                            />
+                                        </div>
+
+                                        <div className="space-y-1">
+                                            <label className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Format</label>
+                                            <div className="relative">
+                                                <div className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500">
+                                                    <Hash size={14} />
+                                                </div>
+                                                <select
+                                                    value={formData.format}
+                                                    onChange={e => updateField('format', e.target.value)}
+                                                    className="w-full bg-black/50 border border-zinc-800 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:ring-1 focus:ring-zinc-600 outline-none transition-all appearance-none"
+                                                >
+                                                    <option value="in-person">In-Person</option>
+                                                    <option value="remote">Remote</option>
+                                                    <option value="hybrid">Hybrid</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        {(formData.format === 'in-person' || formData.format === 'hybrid') && (
+                                            <IconInput
+                                                label="Location"
+                                                value={formData.location}
+                                                onChange={v => updateField('location', v)}
+                                                icon={MapPin}
+                                            />
+                                        )}
+
+                                        <div className="space-y-1">
+                                            <label className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Description</label>
+                                            <div className="relative">
+                                                <div className="absolute left-2.5 top-3 text-zinc-500">
+                                                    <AlignLeft size={14} />
+                                                </div>
+                                                <textarea
+                                                    value={formData.description || ''}
+                                                    onChange={e => updateField('description', e.target.value)}
+                                                    rows={5}
+                                                    className="w-full bg-black/50 border border-zinc-800 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:ring-1 focus:ring-zinc-600 outline-none resize-none transition-all"
+                                                />
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    {/* Important Links */}
+                                    <section className="space-y-3">
+                                        <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Important Links</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <LinkInput
+                                                label="Luma / Registration"
+                                                value={getLink('registration')}
+                                                onChange={v => updateLink('registration', v)}
+                                                icon={ExternalLink}
+                                            />
+                                            <LinkInput
+                                                label="YouTube URL"
+                                                value={getLink('streaming')}
+                                                onChange={v => updateLink('streaming', v)}
+                                                icon={MonitorPlay}
+                                            />
+                                            <LinkInput
+                                                label="Google Drive"
+                                                value={getLink('assets')}
+                                                onChange={v => updateLink('assets', v)}
+                                                icon={FolderOpen}
+                                            />
+                                            <LinkInput
+                                                label="Slides Folder"
+                                                value={getLink('slides')}
+                                                onChange={v => updateLink('slides', v)}
+                                                icon={FolderOpen}
+                                            />
+                                            <LinkInput
+                                                label="Google Maps"
+                                                value={getLink('location')}
+                                                onChange={v => updateLink('location', v)}
+                                                icon={MapPin}
+                                            />
+                                            <LinkInput
+                                                label="WhatsApp Group"
+                                                value={getLink('community')}
+                                                onChange={v => updateLink('community', v)}
+                                                icon={Users}
+                                            />
+                                        </div>
+                                    </section>
                                 </div>
-                            </div>
-
-                            {(formData.format === 'in-person' || formData.format === 'hybrid') && (
-                                <IconInput
-                                    label="Location"
-                                    value={formData.location}
-                                    onChange={v => updateField('location', v)}
-                                    icon={MapPin}
-                                />
                             )}
 
-                            <div className="space-y-1">
-                                <label className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Description</label>
-                                <div className="relative">
-                                    <div className="absolute left-2.5 top-3 text-zinc-500">
-                                        <AlignLeft size={14} />
-                                    </div>
-                                    <textarea
-                                        value={formData.description || ''}
-                                        onChange={e => updateField('description', e.target.value)}
-                                        rows={3}
-                                        className="w-full bg-black/50 border border-zinc-800 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:ring-1 focus:ring-zinc-600 outline-none resize-none transition-all"
+                            {activeTab === 'agenda' && (
+                                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 pb-10">
+                                    <Agenda
+                                        items={formData.agenda || []}
+                                        onChange={items => updateField('agenda', items)}
                                     />
                                 </div>
-                            </div>
-                        </section>
+                            )}
 
-                        {/* Important Links */}
-                        <section className="space-y-3">
-                            <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Important Links</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <LinkInput
-                                    label="Luma / Registration"
-                                    value={getLink('registration')}
-                                    onChange={v => updateLink('registration', v)}
-                                    icon={ExternalLink}
-                                />
-                                <LinkInput
-                                    label="YouTube URL"
-                                    value={getLink('streaming')}
-                                    onChange={v => updateLink('streaming', v)}
-                                    icon={MonitorPlay}
-                                />
-                                <LinkInput
-                                    label="Google Drive"
-                                    value={getLink('assets')}
-                                    onChange={v => updateLink('assets', v)}
-                                    icon={FolderOpen}
-                                />
-                                <LinkInput
-                                    label="Slides Folder"
-                                    value={getLink('slides')}
-                                    onChange={v => updateLink('slides', v)}
-                                    icon={FolderOpen}
-                                />
-                                <LinkInput
-                                    label="Google Maps"
-                                    value={getLink('location')}
-                                    onChange={v => updateLink('location', v)}
-                                    icon={MapPin}
-                                />
-                                <LinkInput
-                                    label="WhatsApp Group"
-                                    value={getLink('community')}
-                                    onChange={v => updateLink('community', v)}
-                                    icon={Users}
-                                />
-                            </div>
-                        </section>
-
-                        {/* Checklist */}
-                        <section className="space-y-3">
-                            <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Readiness Checklist</h3>
-                            <EventReadiness event={event} />
-                        </section>
-
-                        <div className="pt-2">
-                            <button
-                                onClick={handleSave}
-                                disabled={updateEvent.isPending}
-                                className="px-4 py-2 bg-white text-black rounded-md text-sm font-medium hover:bg-zinc-200 transition-colors disabled:opacity-50"
-                            >
-                                {updateEvent.isPending ? 'Saving...' : 'Save Changes'}
-                            </button>
+                            {activeTab === 'settings' && (
+                                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 pb-10">
+                                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-5">
+                                        <h3 className="text-red-400 text-sm font-medium mb-1">Danger Zone</h3>
+                                        <p className="text-zinc-500 text-xs mb-3">Once you delete an event, there is no going back. Please be certain.</p>
+                                        <button
+                                            onClick={handleDelete}
+                                            className="px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-md text-xs font-medium hover:bg-red-500/20 transition-colors"
+                                        >
+                                            Delete Event
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
-                )}
 
-                {activeTab === 'agenda' && (
-                    <div className="max-w-2xl animate-in fade-in slide-in-from-bottom-2 duration-300">
-                        <Agenda
-                            items={formData.agenda || []}
-                            onChange={items => updateField('agenda', items)}
-                        />
-                    </div>
-                )}
+                    {/* Sidebar (Right Pane) */}
+                    <div className="h-full overflow-y-auto pb-10">
+                        <div className="space-y-6 sticky top-0">
+                            {/* Actions Card */}
+                            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5 space-y-4">
+                                <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Actions</h3>
 
-                {activeTab === 'settings' && (
-                    <div className="max-w-2xl animate-in fade-in slide-in-from-bottom-2 duration-300">
-                        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-5">
-                            <h3 className="text-red-400 text-sm font-medium mb-1">Danger Zone</h3>
-                            <p className="text-zinc-500 text-xs mb-3">Once you delete an event, there is no going back. Please be certain.</p>
-                            <button
-                                onClick={handleDelete}
-                                className="px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-md text-xs font-medium hover:bg-red-500/20 transition-colors"
-                            >
-                                Delete Event
-                            </button>
+                                {formData.status === 'draft' && (
+                                    <div className="space-y-3">
+                                        <button
+                                            onClick={handlePublish}
+                                            disabled={isPublishing}
+                                            className="w-full px-3 py-2 bg-white text-black text-xs font-bold uppercase tracking-wider rounded-md hover:bg-zinc-200 transition-colors disabled:opacity-50"
+                                        >
+                                            {isPublishing ? 'Publishing...' : 'Publish Event'}
+                                        </button>
+                                        <p className="text-[10px] text-zinc-500 leading-relaxed">
+                                            Publishing makes the event visible on the public site next build. Ensure all details are correct.
+                                        </p>
+                                    </div>
+                                )}
+
+                                {formData.status === 'published' && (
+                                    <div className="space-y-3">
+                                        <div className="px-3 py-2 bg-amber-500/10 border border-amber-500/20 rounded-md">
+                                            <p className="text-amber-400 text-xs font-medium text-center">Event is Live</p>
+                                        </div>
+                                        <button
+                                            onClick={handleMarkDone}
+                                            className="w-full px-3 py-2 bg-zinc-800 text-white border border-zinc-700 text-xs font-bold uppercase tracking-wider rounded-md hover:bg-zinc-700 transition-colors"
+                                        >
+                                            Mark as Completed
+                                        </button>
+                                    </div>
+                                )}
+
+                                {formData.status === 'done' && (
+                                    <div className="px-3 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-md">
+                                        <p className="text-emerald-400 text-xs font-medium text-center">Event Completed</p>
+                                        <div className="mt-2 text-center">
+                                            <span className="text-2xl font-bold text-emerald-400">{formData.attendeeCount || 0}</span>
+                                            <span className="text-[10px] text-emerald-500/70 block uppercase tracking-wider">Attendees</span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {formData.status === 'draft' && (
+                                    // Backdoor for testing completion flow without publishing
+                                    <button
+                                        onClick={handleMarkDone}
+                                        className="hidden w-full px-3 py-1.5 bg-zinc-800 text-white border border-zinc-700 text-[10px] font-medium rounded-md hover:bg-zinc-700 transition-colors"
+                                    >
+                                        Mark Done (Dev)
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* Readiness Checklist */}
+                            <EventReadiness event={formData} />
                         </div>
                     </div>
-                )}
+                </div>
             </div>
 
             {/* Completion Modal */}
