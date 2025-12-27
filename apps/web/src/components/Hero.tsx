@@ -98,7 +98,7 @@ export function Hero() {
                 variants={animations.staggerContainer}
                 initial="initial"
                 animate="animate"
-                className="relative z-10 flex-1 max-w-2xl lg:pl-12"
+                className="relative z-10 flex-1 lg:pl-12"
             >
                 <motion.div
                     variants={animations.fadeIn}
@@ -113,12 +113,9 @@ export function Hero() {
 
                 <motion.h1
                     variants={animations.reveal}
-                    className="text-5xl md:text-7xl lg:text-8xl font-display font-bold leading-[0.9] tracking-tighter mb-8"
+                    className="text-5xl md:text-7xl lg:text-8xl font-display font-bold leading-[0.9] tracking-tighter mb-8 whitespace-nowrap"
                 >
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-violet to-blue-400">
-                        AI DEV
-                    </span> <br />
-                    PERU
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-violet to-blue-400">AI DEV</span>{" "}PERU
                 </motion.h1>
 
                 <motion.p
