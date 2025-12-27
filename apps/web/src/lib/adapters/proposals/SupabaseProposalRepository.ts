@@ -18,14 +18,47 @@ interface DbProposal {
 
 export class SupabaseProposalRepository implements ProposalRepository {
     async submitProposal(data: CreateProposalDTO): Promise<TalkProposal> {
-        const { data: proposal, error } = await getSupabase()
+        const supabase = getSupabase();
+
+        const { data: proposal, error } = await supabase
             .from('talk_proposals')
             .insert(this.mapToDb(data))
             .select()
             .single();
 
         if (error) throw error;
-        return this.mapProposal(proposal);
+
+        const result = this.mapProposal(proposal);
+
+        // Send email notification (fire-and-forget, don't block on failure)
+        this.sendEmailNotification(result).catch(err => {
+            console.error('Failed to send email notification:', err);
+        });
+
+        return result;
+    }
+
+    private async sendEmailNotification(proposal: TalkProposal): Promise<void> {
+        const supabase = getSupabase();
+
+        const { error } = await supabase.functions.invoke('notify-new-proposal', {
+            body: {
+                type: 'INSERT',
+                table: 'talk_proposals',
+                record: {
+                    id: proposal.id,
+                    full_name: proposal.fullName,
+                    email: proposal.email,
+                    phone: proposal.phone,
+                    title: proposal.title,
+                    description: proposal.description,
+                    duration: proposal.duration,
+                    created_at: proposal.createdAt
+                }
+            }
+        });
+
+        if (error) throw error;
     }
 
     async getProposals(): Promise<TalkProposal[]> {

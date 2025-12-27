@@ -125,3 +125,6 @@ dist
 
 # Vite
 dist-ssr
+
+# Supabase
+supabase/.temp/
