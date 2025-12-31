@@ -4,10 +4,17 @@ import { motion } from 'framer-motion'
 import { useEffect } from 'react'
 
 export const Route = createFileRoute('/_public/proponer-charla')({
+    validateSearch: (search: Record<string, unknown>): { eventId?: string } => {
+        return {
+            eventId: typeof search.eventId === 'string' ? search.eventId : undefined,
+        }
+    },
     component: ProponerCharla,
 })
 
 function ProponerCharla() {
+    const { eventId } = Route.useSearch()
+
     // Scroll to top on mount
     useEffect(() => {
         window.scrollTo(0, 0)
@@ -24,7 +31,7 @@ function ProponerCharla() {
             <div className="absolute inset-0 bg-grainy opacity-50" />
 
             <div className="relative z-10">
-                <SpeakerForm />
+                <SpeakerForm eventId={eventId} />
             </div>
         </motion.main>
     )

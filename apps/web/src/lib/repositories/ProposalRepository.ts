@@ -13,6 +13,7 @@ export interface TalkProposal {
     github?: string;
     twitter?: string;
     createdAt: string;
+    eventId?: string;
 }
 
 export interface CreateProposalDTO {
@@ -25,6 +26,7 @@ export interface CreateProposalDTO {
     linkedin?: string;
     github?: string;
     twitter?: string;
+    eventId?: string;
 }
 
 export interface ProposalRepository {

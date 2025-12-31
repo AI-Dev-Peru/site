@@ -78,6 +78,7 @@ export class InMemoryEventRepository implements EventRepository {
         const newEvent: Event = {
             id: Math.random().toString(36).substr(2, 9),
             ...data,
+            time: data.time || '',
             location: '',
             description: '',
             status: 'draft',

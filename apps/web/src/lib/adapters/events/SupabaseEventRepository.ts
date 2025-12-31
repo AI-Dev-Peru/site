@@ -130,6 +130,7 @@ export class SupabaseEventRepository implements EventRepository {
             status: dbEvent.status,
             imageUrl: dbEvent.image_url,
             attendeeCount: dbEvent.attendee_count,
+            isDateUnsure: dbEvent.is_date_unsure,
             links: (dbEvent.event_links || [])
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 .map((l: any) => ({
@@ -161,6 +162,10 @@ export class SupabaseEventRepository implements EventRepository {
         if (data.attendeeCount !== undefined) {
             dbData.attendee_count = data.attendeeCount;
             delete dbData.attendeeCount;
+        }
+        if (data.isDateUnsure !== undefined) {
+            dbData.is_date_unsure = data.isDateUnsure;
+            delete dbData.isDateUnsure;
         }
         return dbData;
     }

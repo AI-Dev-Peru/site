@@ -59,6 +59,13 @@ function EventCard({ event }: { event: Event }) {
     // Helper to get registration link
     const regLink = event.links?.find((l) => l.type === 'registration')?.url
 
+    const formattedDate = event.isDateUnsure
+        ? `[${new Date(event.date + 'T00:00:00').toLocaleDateString('es-PE', { month: 'long' })}] (fecha por definir)`
+        : new Date(event.date + 'T00:00:00').toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+
+    // Show CTA if agenda is empty
+    const showProposeCTA = !event.agenda || event.agenda.length === 0
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -82,12 +89,14 @@ function EventCard({ event }: { event: Event }) {
                     <div className="space-y-2 text-zinc-400 text-sm">
                         <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4 text-zinc-500" />
-                            <span>{new Date(event.date + 'T00:00:00').toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                            <span className="capitalize">{formattedDate}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Clock className="w-4 h-4 text-zinc-500" />
-                            <span>{event.time}</span>
-                        </div>
+                        {!event.isDateUnsure && (
+                            <div className="flex items-center gap-2">
+                                <Clock className="w-4 h-4 text-zinc-500" />
+                                <span>{event.time}</span>
+                            </div>
+                        )}
                         {(event.format === 'in-person' || event.format === 'hybrid') && (
                             <div className="flex items-center gap-2">
                                 <MapPin className="w-4 h-4 text-zinc-500" />
@@ -103,7 +112,16 @@ function EventCard({ event }: { event: Event }) {
                     )}
                 </div>
 
-                <div className="pt-6 mt-6 border-t border-zinc-800">
+                <div className="pt-6 mt-6 border-t border-zinc-800 space-y-3">
+                    {showProposeCTA && (
+                        <a
+                            href={`/proponer-charla?eventId=${event.id}`}
+                            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-zinc-800 text-zinc-300 font-bold hover:bg-zinc-700 hover:text-white transition-all text-sm border border-zinc-700"
+                        >
+                            <span>Proponer charla</span>
+                        </a>
+                    )}
+
                     {regLink ? (
                         <a
                             href={regLink}
@@ -114,11 +132,11 @@ function EventCard({ event }: { event: Event }) {
                             <span>Registrarme</span>
                             <ExternalLink className="w-4 h-4" />
                         </a>
-                    ) : (
+                    ) : !showProposeCTA ? (
                         <button disabled className="w-full py-3 rounded-xl bg-zinc-800 text-zinc-500 font-bold text-sm cursor-not-allowed">
                             Próximamente
                         </button>
-                    )}
+                    ) : null}
                 </div>
             </div>
         </motion.div>

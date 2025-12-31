@@ -162,4 +162,53 @@ describe('AcceptProposalDialog', () => {
             expect(events).toHaveLength(1)
         })
     })
+    it('should create new event with tentative date', async () => {
+        fakeEventsRepo.givenEvents([])
+        fakeSpeakersRepo.givenSpeakers([])
+
+        render(<AcceptProposalDialog proposal={mockProposal} open={true} onOpenChange={mockOnOpenChange} />, {
+            wrapper: createTestWrapper()
+        })
+
+        // Fill new event form
+        fireEvent.change(screen.getByPlaceholderText('Event Title'), { target: { value: 'Tentative Event' } })
+
+        // Click "Fecha tentativa"
+        fireEvent.click(screen.getByLabelText(/Fecha tentativa/))
+
+        // Click Confirm
+        fireEvent.click(screen.getByText('Confirm & Accept'))
+
+        await waitFor(async () => {
+            const events = await fakeEventsRepo.getEvents()
+            expect(events).toHaveLength(1)
+            expect(events[0].title).toBe('Tentative Event')
+            expect(events[0].isDateUnsure).toBe(true)
+            expect(events[0].time).toBe('')
+        })
+    })
+    it('should auto-select linked event', async () => {
+        const linkedProposal = { ...mockProposal, eventId: 'test-event-1' }
+        fakeEventsRepo.givenEvents([{
+            id: 'test-event-1',
+            title: 'Linked Event',
+            date: '2024-01-01',
+            time: '18:00',
+            format: 'in-person',
+            location: '',
+            description: '',
+            status: 'published',
+            agenda: [],
+            links: []
+        }])
+
+        render(<AcceptProposalDialog proposal={linkedProposal} open={true} onOpenChange={mockOnOpenChange} />, {
+            wrapper: createTestWrapper()
+        })
+
+        await waitFor(() => {
+            const select = screen.getByLabelText(/Select Event/) as HTMLSelectElement
+            expect(select.value).toBe('test-event-1')
+        })
+    })
 })

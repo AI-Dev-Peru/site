@@ -4,7 +4,11 @@ import { Send, CheckCircle2, AlertCircle } from "lucide-react";
 import { cn } from "../lib/design-system";
 import { proposalsRepository } from "../lib/dataSource";
 
-export function SpeakerForm() {
+interface SpeakerFormProps {
+    eventId?: string;
+}
+
+export function SpeakerForm({ eventId }: SpeakerFormProps) {
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [formData, setFormData] = useState({
         fullName: '',
@@ -15,8 +19,14 @@ export function SpeakerForm() {
         duration: '15' as '15' | '30',
         linkedin: '',
         github: '',
-        twitter: ''
+        twitter: '',
+        eventId: eventId
     });
+
+    // Update local state if prop changes
+    if (eventId && formData.eventId !== eventId) {
+        setFormData(prev => ({ ...prev, eventId }));
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

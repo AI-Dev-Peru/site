@@ -14,6 +14,7 @@ interface DbProposal {
     github?: string;
     twitter?: string;
     created_at: string;
+    event_id?: string;
 }
 
 export class SupabaseProposalRepository implements ProposalRepository {
@@ -93,7 +94,8 @@ export class SupabaseProposalRepository implements ProposalRepository {
             linkedin: db.linkedin,
             github: db.github,
             twitter: db.twitter,
-            createdAt: db.created_at
+            createdAt: db.created_at,
+            eventId: db.event_id
         };
     }
 
@@ -107,7 +109,8 @@ export class SupabaseProposalRepository implements ProposalRepository {
             duration: data.duration,
             linkedin: data.linkedin,
             github: data.github,
-            twitter: data.twitter
+            twitter: data.twitter,
+            event_id: data.eventId
         };
     }
 }

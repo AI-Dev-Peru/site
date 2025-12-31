@@ -110,15 +110,13 @@ export function EventEditor({ event }: { event: Event }) {
     }
 
     const isReadyToPublish = () => {
-        const hasBasicInfo = !!(formData.date && formData.description)
-        const hasAgenda = (formData.agenda?.length || 0) > 0
-        // Published events might not have slides yet
-        return hasBasicInfo && hasAgenda
+        // Any event is publishable as long as it has title & date
+        return !!formData.title && !!formData.date
     }
 
     const handlePublish = async () => {
         if (!isReadyToPublish()) {
-            alert('Cannot publish. Please ensure Date, Description, and Agenda are set.')
+            alert('Cannot publish. Please ensure Title and Date are set.')
             return
         }
         setIsPublishing(true)
@@ -234,6 +232,19 @@ export function EventEditor({ event }: { event: Event }) {
                                             />
                                         </div>
 
+                                        <div className="flex items-center space-x-2 py-2">
+                                            <input
+                                                type="checkbox"
+                                                id="edit-isDateUnsure"
+                                                checked={!!formData.isDateUnsure}
+                                                onChange={(e) => updateField('isDateUnsure', e.target.checked)}
+                                                className="w-4 h-4 rounded border-zinc-800 bg-black/50 text-indigo-600 focus:ring-indigo-600 focus:ring-offset-zinc-950"
+                                            />
+                                            <label htmlFor="edit-isDateUnsure" className="text-xs font-medium text-zinc-400">
+                                                Fecha tentativa (Date not exact)
+                                            </label>
+                                        </div>
+
                                         <div className="grid grid-cols-2 gap-3">
                                             <IconInput
                                                 label="Date"
@@ -242,13 +253,15 @@ export function EventEditor({ event }: { event: Event }) {
                                                 onChange={v => updateField('date', v)}
                                                 icon={Calendar}
                                             />
-                                            <IconInput
-                                                label="Time"
-                                                type="time"
-                                                value={formData.time}
-                                                onChange={v => updateField('time', v)}
-                                                icon={Clock}
-                                            />
+                                            {!formData.isDateUnsure && (
+                                                <IconInput
+                                                    label="Time"
+                                                    type="time"
+                                                    value={formData.time}
+                                                    onChange={v => updateField('time', v)}
+                                                    icon={Clock}
+                                                />
+                                            )}
                                         </div>
 
                                         <div className="space-y-1">

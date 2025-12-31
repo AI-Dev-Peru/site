@@ -12,6 +12,7 @@ export function CreateEventModal({ isOpen, onClose }: CreateEventModalProps) {
     const createEvent = useCreateEvent()
     const [title, setTitle] = useState('')
     const [date, setDate] = useState(new Date().toISOString().split('T')[0])
+    const [isDateUnsure, setIsDateUnsure] = useState(false)
     const [time, setTime] = useState('19:00')
     const [format, setFormat] = useState<EventFormat>('in-person')
 
@@ -19,7 +20,13 @@ export function CreateEventModal({ isOpen, onClose }: CreateEventModalProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        await createEvent.mutateAsync({ title, date, time, format })
+        await createEvent.mutateAsync({
+            title,
+            date,
+            time: isDateUnsure ? '' : time,
+            format,
+            isDateUnsure
+        })
         onClose()
         setTitle('')
         // Reset other fields if needed
@@ -50,8 +57,9 @@ export function CreateEventModal({ isOpen, onClose }: CreateEventModalProps) {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Date</label>
+                            <label htmlFor="event-date" className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Date</label>
                             <input
+                                id="event-date"
                                 type="date"
                                 required
                                 value={date}
@@ -60,15 +68,30 @@ export function CreateEventModal({ isOpen, onClose }: CreateEventModalProps) {
                             />
                         </div>
                         <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Time</label>
+                            <label htmlFor="event-time" className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Time</label>
                             <input
+                                id="event-time"
                                 type="time"
-                                required
+                                required={!isDateUnsure}
+                                disabled={isDateUnsure}
                                 value={time}
                                 onChange={(e) => setTime(e.target.value)}
-                                className="w-full bg-black/50 border border-zinc-800 rounded-md px-3 py-2 text-white focus:ring-1 focus:ring-zinc-600 outline-none transition-all"
+                                className="w-full bg-black/50 border border-zinc-800 rounded-md px-3 py-2 text-white focus:ring-1 focus:ring-zinc-600 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             />
                         </div>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                        <input
+                            type="checkbox"
+                            id="isDateUnsure"
+                            checked={isDateUnsure}
+                            onChange={(e) => setIsDateUnsure(e.target.checked)}
+                            className="w-4 h-4 rounded border-zinc-800 bg-black/50 text-indigo-600 focus:ring-indigo-600 focus:ring-offset-zinc-950"
+                        />
+                        <label htmlFor="isDateUnsure" className="text-sm font-medium text-zinc-400">
+                            Fecha tentativa (Date not exact)
+                        </label>
                     </div>
 
                     <div className="space-y-1.5">

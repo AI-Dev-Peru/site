@@ -15,6 +15,7 @@ export interface Event {
     description: string;
     format: EventFormat;
     status: EventStatus;
+    isDateUnsure?: boolean;
     imageUrl?: string;
     attendeeCount?: number;
 
@@ -33,6 +34,7 @@ export interface AgendaItem {
 export interface CreateEventDTO {
     title: string;
     date: string;
-    time: string;
+    time?: string;
+    isDateUnsure?: boolean;
     format: EventFormat;
 }

@@ -121,6 +121,7 @@ describe('EventDetail - Unsaved Changes', () => {
         confirmSpy.mockRestore()
     })
 
+
     it('should navigate when user confirms warning', () => {
         const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
 
@@ -141,5 +142,62 @@ describe('EventDetail - Unsaved Changes', () => {
         expect(mockNavigate).toHaveBeenCalledWith({ to: '/internal' })
 
         confirmSpy.mockRestore()
+    })
+
+    it('should allow publishing with tentative date', async () => {
+        const tentativeEvent: Event = {
+            ...testEvent,
+            isDateUnsure: true,
+            time: '',
+            agenda: [], // Empty agenda
+            description: 'Desc'
+        }
+
+        render(<EventEditor event={tentativeEvent} />, { wrapper: createTestWrapper() })
+
+        // Check availability of Publish button
+        const actionButton = screen.getByRole('button', { name: /Publish Event/i })
+        expect(actionButton).toBeEnabled()
+
+        fireEvent.click(actionButton)
+
+        await waitFor(async () => {
+            const events = await fakeEventsRepo.getEvents()
+            expect(events[0].status).toBe('published')
+            expect(events[0].isDateUnsure).toBe(true)
+        })
+    })
+
+    it('should hide time input when "Fecha tentativa" is checked in editor', async () => {
+        render(<EventEditor event={testEvent} />, { wrapper: createTestWrapper() })
+
+        const checkbox = screen.getByLabelText(/Fecha tentativa/)
+        fireEvent.click(checkbox)
+
+        const timeInput = screen.queryByLabelText(/Time/)
+        expect(timeInput).not.toBeInTheDocument()
+    })
+
+    it('should allow publishing with only title and date', async () => {
+        const simpleEvent: Event = {
+            ...testEvent,
+            title: 'Simple Event',
+            date: '2024-01-01',
+            description: '', // Empty description
+            agenda: [], // Empty agenda
+            status: 'draft'
+        }
+
+        render(<EventEditor event={simpleEvent} />, { wrapper: createTestWrapper() })
+
+        const publishButton = screen.getByRole('button', { name: /Publish Event/i })
+        expect(publishButton).toBeEnabled()
+
+        fireEvent.click(publishButton)
+
+        await waitFor(async () => {
+            const events = await fakeEventsRepo.getEvents()
+            expect(events[0].status).toBe('published')
+        })
     })
 })

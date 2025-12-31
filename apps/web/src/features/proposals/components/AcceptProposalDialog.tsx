@@ -14,7 +14,7 @@ interface AcceptProposalDialogProps {
 
 export function AcceptProposalDialog({ proposal, open, onOpenChange }: AcceptProposalDialogProps) {
     const [selectedEventId, setSelectedEventId] = useState<string>('new');
-    const [newEventData, setNewEventData] = useState({ title: '', date: '', time: '' });
+    const [newEventData, setNewEventData] = useState({ title: '', date: '', time: '', isDateUnsure: false });
     const [speakerMode, setSpeakerMode] = useState<'existing' | 'new'>('new');
     const [selectedSpeakerId, setSelectedSpeakerId] = useState<string>('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,16 +27,27 @@ export function AcceptProposalDialog({ proposal, open, onOpenChange }: AcceptPro
     const createEvent = useCreateEvent();
 
     useEffect(() => {
-        if (open && speakers) {
-            const match = speakers.find(s => s.email === proposal.email);
-            if (match) {
-                setSpeakerMode('existing');
-                setSelectedSpeakerId(match.id);
-            } else {
-                setSpeakerMode('new');
+        if (open) {
+            // Check for existing speaker
+            if (speakers) {
+                const match = speakers.find(s => s.email === proposal.email);
+                if (match) {
+                    setSpeakerMode('existing');
+                    setSelectedSpeakerId(match.id);
+                } else {
+                    setSpeakerMode('new');
+                }
+            }
+
+            // Check for linked event
+            if (proposal.eventId && events) {
+                const eventMatch = events.find(e => e.id === proposal.eventId);
+                if (eventMatch) {
+                    setSelectedEventId(eventMatch.id);
+                }
             }
         }
-    }, [open, speakers, proposal.email]);
+    }, [open, speakers, events, proposal.email, proposal.eventId]);
 
     if (!open) return null;
 
@@ -63,7 +74,8 @@ export function AcceptProposalDialog({ proposal, open, onOpenChange }: AcceptPro
                 const newEvent = await createEvent.mutateAsync({
                     title: newEventData.title,
                     date: newEventData.date || new Date().toISOString(),
-                    time: newEventData.time || '19:00',
+                    time: newEventData.isDateUnsure ? '' : (newEventData.time || '19:00'),
+                    isDateUnsure: newEventData.isDateUnsure,
                     format: 'in-person'
                 });
                 eventId = newEvent.id;
@@ -142,6 +154,20 @@ export function AcceptProposalDialog({ proposal, open, onOpenChange }: AcceptPro
                                     onChange={e => setNewEventData({ ...newEventData, title: e.target.value })}
                                     className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:ring-1 focus:ring-zinc-600 outline-none"
                                 />
+
+                                <div className="flex items-center space-x-2 py-1">
+                                    <input
+                                        type="checkbox"
+                                        id="proposal-isDateUnsure"
+                                        checked={newEventData.isDateUnsure}
+                                        onChange={(e) => setNewEventData({ ...newEventData, isDateUnsure: e.target.checked })}
+                                        className="w-4 h-4 rounded border-zinc-800 bg-black/50 text-indigo-600 focus:ring-indigo-600 focus:ring-offset-zinc-950"
+                                    />
+                                    <label htmlFor="proposal-isDateUnsure" className="text-xs font-medium text-zinc-400">
+                                        Fecha tentativa (Date not exact)
+                                    </label>
+                                </div>
+
                                 <div className="grid grid-cols-2 gap-2">
                                     <input
                                         type="date"
@@ -153,7 +179,8 @@ export function AcceptProposalDialog({ proposal, open, onOpenChange }: AcceptPro
                                         type="time"
                                         value={newEventData.time}
                                         onChange={e => setNewEventData({ ...newEventData, time: e.target.value })}
-                                        className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:ring-1 focus:ring-zinc-600 outline-none"
+                                        disabled={newEventData.isDateUnsure}
+                                        className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:ring-1 focus:ring-zinc-600 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                                     />
                                 </div>
                             </div>
