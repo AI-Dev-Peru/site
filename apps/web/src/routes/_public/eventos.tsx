@@ -60,7 +60,7 @@ function EventCard({ event }: { event: Event }) {
     const regLink = event.links?.find((l) => l.type === 'registration')?.url
 
     const formattedDate = event.isDateUnsure
-        ? `[${new Date(event.date + 'T00:00:00').toLocaleDateString('es-PE', { month: 'long' })}] (fecha por definir)`
+        ? 'Fecha por definir'
         : new Date(event.date + 'T00:00:00').toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 
     // Show CTA if agenda is empty
