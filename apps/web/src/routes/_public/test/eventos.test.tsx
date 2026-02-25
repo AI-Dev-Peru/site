@@ -73,7 +73,7 @@ describe('UpcomingEvents Page', () => {
         render(<UpcomingEvents />, { wrapper: createTestWrapper() })
 
         await waitFor(() => {
-            expect(screen.getByText(/\(fecha por definir\)/)).toBeInTheDocument()
+            expect(screen.getByText('Fecha por definir')).toBeInTheDocument()
         }, { timeout: 2000 })
     })
 

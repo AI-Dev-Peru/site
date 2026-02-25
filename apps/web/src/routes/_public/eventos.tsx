@@ -62,8 +62,16 @@ function EventCard({ event }: { event: Event }) {
     const isRemoteEvent = event.format === 'remote'
 
     const formattedDate = event.isDateUnsure
-        ? `[${new Date(event.date + 'T00:00:00').toLocaleDateString('es-PE', { month: 'long' })}] (fecha por definir)`
+        ? 'Fecha por definir'
         : new Date(event.date + 'T00:00:00').toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+
+    const formatTranslations = {
+        'in-person': 'Presencial',
+        'remote': 'Remoto',
+        'hybrid': 'Híbrido'
+    } as const
+
+    const translatedFormat = formatTranslations[event.format]
 
     // Show CTA if agenda is empty
     const showProposeCTA = !event.agenda || event.agenda.length === 0
@@ -80,7 +88,7 @@ function EventCard({ event }: { event: Event }) {
                     <div className="flex items-start justify-between gap-4">
                         <div className="space-y-1">
                             <div className="text-electric-violet text-sm font-bold tracking-wider uppercase">
-                                {event.format}
+                                {translatedFormat}
                             </div>
                             <h3 className="text-xl font-bold text-white group-hover:text-electric-violet transition-colors line-clamp-2">
                                 {event.title}
