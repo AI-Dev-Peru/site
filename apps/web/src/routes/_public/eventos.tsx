@@ -58,6 +58,8 @@ function UpcomingEvents() {
 function EventCard({ event }: { event: Event }) {
     // Helper to get registration link
     const regLink = event.links?.find((l) => l.type === 'registration')?.url
+    const youtubeLink = event.links?.find((l) => l.type === 'streaming')?.url
+    const isRemoteEvent = event.format === 'remote'
 
     const formattedDate = event.isDateUnsure
         ? `[${new Date(event.date + 'T00:00:00').toLocaleDateString('es-PE', { month: 'long' })}] (fecha por definir)`
@@ -122,17 +124,17 @@ function EventCard({ event }: { event: Event }) {
                         </a>
                     )}
 
-                    {regLink ? (
+                    {(isRemoteEvent ? youtubeLink : regLink) ? (
                         <a
-                            href={regLink}
+                            href={isRemoteEvent ? youtubeLink : regLink}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white text-black font-bold hover:bg-electric-violet hover:text-white transition-all group-active:scale-95 text-sm"
                         >
-                            <span>Registrarme</span>
+                            <span>{isRemoteEvent ? 'Ver en Youtube' : 'Registrarme'}</span>
                             <ExternalLink className="w-4 h-4" />
                         </a>
-                    ) : !showProposeCTA ? (
+                    ) : (isRemoteEvent || !showProposeCTA) ? (
                         <button disabled className="w-full py-3 rounded-xl bg-zinc-800 text-zinc-500 font-bold text-sm cursor-not-allowed">
                             Próximamente
                         </button>

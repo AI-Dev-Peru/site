@@ -106,4 +106,36 @@ describe('UpcomingEvents Page', () => {
         const proposeLink = screen.queryByRole('link', { name: /Proponer charla/i })
         expect(proposeLink).not.toBeInTheDocument()
     })
+
+    it('should show "Próximamente" for remote events without YouTube URL', async () => {
+        const remoteEventNoYoutube: Event = {
+            ...mockEvent,
+            format: 'remote',
+            links: [],
+        }
+        fakeEventsRepo.givenEvents([remoteEventNoYoutube])
+
+        render(<UpcomingEvents />, { wrapper: createTestWrapper() })
+
+        await waitFor(() => {
+            expect(screen.getByRole('button', { name: /Próximamente/i })).toBeDisabled()
+        }, { timeout: 2000 })
+    })
+
+    it('should show "Ver en Youtube" for remote events with YouTube URL', async () => {
+        const remoteEventWithYoutube: Event = {
+            ...mockEvent,
+            format: 'remote',
+            links: [{ type: 'streaming', url: 'https://youtube.com/watch?v=abc123' }],
+        }
+        fakeEventsRepo.givenEvents([remoteEventWithYoutube])
+
+        render(<UpcomingEvents />, { wrapper: createTestWrapper() })
+
+        await waitFor(() => {
+            const youtubeLink = screen.getByRole('link', { name: /Ver en Youtube/i })
+            expect(youtubeLink).toBeInTheDocument()
+            expect(youtubeLink).toHaveAttribute('href', 'https://youtube.com/watch?v=abc123')
+        }, { timeout: 2000 })
+    })
 })
